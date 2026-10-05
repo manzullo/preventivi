@@ -16,7 +16,8 @@ conviene farla leggere a un avvocato, soprattutto la parte GDPR.
 | **Registro Imprese (InfoCamere)**, elenchi per codice ATECO e provincia | ragione sociale, P.IVA, sede, ATECO, stato attivo, a volte PEC | elenchi a pagamento dai distributori ufficiali | Dati pubblici per legge e riutilizzabili; le ditte individuali sono persone fisiche, quindi vale il GDPR (vedi sotto). Niente telefono né recensioni | a elenco, da preventivare | Completezza per mestiere (es. 43.22.01 impianti idraulici, 43.21.01 impianti elettrici, 43.34.00 tinteggiatura, 69.20.11 commercialisti) e verifica che l'attività esista |
 | **Albi professionali** (avvocati, commercialisti, architetti, geometri, psicologi, notai) | nome, numero di iscrizione, sede | consultazione dei siti degli ordini | Pubblici per legge per la verifica dell'iscrizione; l'uso massivo per costruire un elenco commerciale è discutibile. Meglio usarli per verificare chi è già in elenco | 0 € | Badge "iscritto all'albo" sulla scheda |
 | **Iscrizione diretta e rivendicazione** | tutto, con consenso | `/candidatura/`, `/rivendica/` (già pronti) | nessun rischio | 0 € | Il canale da spingere appena c'è traffico |
-| ProntoPro, Instapro, PagineGialle, Houzz, StarOfService | — | — | i termini vietano l'estrazione e le banche dati sono protette | — | **Non si usano.** Al massimo come elenco dei nomi da cercare poi su fonti lecite |
+| ProntoPro, PagineGialle | ProntoPro: nome, categoria, comune, presentazione (niente recapiti). PagineGialle: anche indirizzo, telefono, email, sito | `--fonte sito:prontopro`, `--fonte sito:paginegialle` (sezione 2) | i termini vietano l'estrazione e le banche dati sono protette: rischio contrattuale e sui generis, come per Maps | 0 € | **Solo per la cernita** (decisione del 2026-10-05): elenco di chi esiste, da incrociare con Maps e coi siti prima di pubblicare |
+| Instapro, Houzz, StarOfService | — | — | come sopra | — | Non si usano |
 
 ## 2. Gli scraper (decisione del 2026-10-05: niente Apify, scraper nostri)
 
@@ -44,7 +45,9 @@ confermare i selettori.
 
 1. `osm` su Roma, tutte le categorie: gratis e pulito, dà un primo nucleo.
 2. `maps` su Roma, 5 categorie, `--max 40`, dal Mac: misura tempi e scarto.
-3. Le directory scelte, una alla volta, con il file in `data/siti/`.
+3. Cernita con `sito:paginegialle` e `sito:prontopro` (configurazioni in
+   `data/siti/`, per ora 5 categorie su Roma). ProntoPro si legge dai dati di
+   Next.js della scheda (`estrattore: "prontopro"`), PagineGialle dal JSON-LD.
 4. Controllo a mano di un campione, poi pubblicazione.
 
 ## 3. GDPR: cosa serve prima di pubblicare
@@ -85,6 +88,10 @@ INGEST_ENABLED=1 npm run scrape -- --fonte maps --city roma --service idraulici,
 
 # una directory configurata in data/siti/nomesito.json
 INGEST_ENABLED=1 npm run scrape -- --fonte sito:nomesito --city milano --service idraulici --confirm
+
+# cernita: PagineGialle e ProntoPro
+INGEST_ENABLED=1 npm run scrape -- --fonte sito:paginegialle --city roma --service idraulici,elettricisti,imbianchini,fotografi,commercialisti --confirm
+INGEST_ENABLED=1 npm run scrape -- --fonte sito:prontopro --city roma --service idraulici,elettricisti,imbianchini,fotografi,commercialisti --confirm
 
 # rilegge il grezzo già scaricato, senza rete
 INGEST_ENABLED=1 npm run scrape -- --fonte maps --city roma --service idraulici --reuse --confirm

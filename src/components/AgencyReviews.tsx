@@ -11,6 +11,8 @@ const PASSO = 8;
 export const SOURCE_LABEL: Record<string, string> = {
   google: "Google",
   google_maps: "Google",
+  prontopro: "ProntoPro",
+  paginegialle: "PagineGialle",
   osm: "OpenStreetMap",
   sortlist: "Sortlist",
   pickanagency: "Pick an Agency",
