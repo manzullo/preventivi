@@ -22,6 +22,8 @@ const SEL = {
   telefono: 'button[data-item-id^="phone:tel:"]',
   sito: 'a[data-item-id="authority"]',
   voto: 'div.F7nice span[aria-hidden="true"]',
+  // Da ottobre 2026, senza login, Maps mostra solo le stelle: il numero di
+  // recensioni spesso non c'è e il campo resta vuoto.
   numeroRecensioni: 'div.F7nice span[aria-label*="recension"]',
   consenso: 'form[action*="consent"] button, button[aria-label*="Rifiuta tutto"], button[aria-label*="Accetta tutto"]',
 };
@@ -96,6 +98,13 @@ async function linkRisultati(page: Page, max: number): Promise<string[]> {
   return [...new Set(hrefs)].slice(0, max);
 }
 
+// Un campo che manca (scheda senza sito, senza telefono) non deve far
+// aspettare il timeout di Playwright: si controlla prima che ci sia.
+const attr = async (page: Page, sel: string, name: string) => {
+  const l = page.locator(sel).first();
+  return (await l.count()) ? l.getAttribute(name) : null;
+};
+
 const testo = async (page: Page, sel: string) => {
   const l = page.locator(sel).first();
   return (await l.count()) ? ((await l.textContent()) ?? "").trim() || undefined : undefined;
@@ -103,15 +112,18 @@ const testo = async (page: Page, sel: string) => {
 
 async function leggiScheda(page: Page, url: string, query: string): Promise<MapsPlace | null> {
   await page.goto(url, { waitUntil: "domcontentloaded" });
-  await page.locator(SEL.nome).first().waitFor({ timeout: 15_000 }).catch(() => undefined);
+  // L'h1 c'è subito ma vuoto (e nascosto senza finestra): si aspetta il testo.
+  await page
+    .waitForFunction((sel) => (document.querySelector(sel)?.textContent ?? "").trim().length > 0, SEL.nome, { timeout: 15_000 })
+    .catch(() => undefined);
   const name = await testo(page, SEL.nome);
   if (!name) return null;
   const { ref, lat, lng } = parsePlaceUrl(page.url().includes("!1s") ? page.url() : url);
-  const phoneAttr = await page.locator(SEL.telefono).first().getAttribute("data-item-id").catch(() => null);
-  const website = await page.locator(SEL.sito).first().getAttribute("href").catch(() => null);
+  const phoneAttr = await attr(page, SEL.telefono, "data-item-id");
+  const website = await attr(page, SEL.sito, "href");
   const voto = Number((await testo(page, SEL.voto))?.replace(",", "."));
-  const recensioni = Number((await page.locator(SEL.numeroRecensioni).first().getAttribute("aria-label").catch(() => null))?.replace(/\D/g, ""));
-  const address = (await page.locator(SEL.indirizzo).first().getAttribute("aria-label").catch(() => null))?.replace(/^Indirizzo:\s*/, "") ?? undefined;
+  const recensioni = Number((await attr(page, SEL.numeroRecensioni, "aria-label"))?.replace(/\D/g, ""));
+  const address = (await attr(page, SEL.indirizzo, "aria-label"))?.replace(/^Indirizzo:\s*/, "") ?? undefined;
   return {
     url,
     ref: ref ?? url,

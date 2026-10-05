@@ -57,26 +57,36 @@ async function main() {
 
   const tutti: IngestRecord[] = [];
   let fuoriTema = 0;
+  const falliti: string[] = [];
   try {
     for (const s of services) {
       const file = `${dir}/${city.slug}-${s.slug}.json`;
       let records: IngestRecord[];
-      if (REUSE && fs.existsSync(file)) {
-        records = JSON.parse(fs.readFileSync(file, "utf8"));
-      } else if (FONTE === "osm") {
-        if (!OSM_TAGS[s.slug]) { console.log(`${s.slug}: nessun tag OSM, salto`); continue; }
-        const r = await fetchOsm({ serviceSlug: s.slug, citySlug: city.slug, cityName: city.name });
-        records = r.records;
-        fs.writeFileSync(file, JSON.stringify(records));
-      } else if (FONTE === "maps") {
-        const query = `${((s.queries as string[]) ?? [s.name])[0]} ${city.name}`;
-        const places: MapsPlace[] = await searchMaps(browser!, query, { max: MAX, log: console.log });
-        records = places.map((p) => mapsToRecord(p, s.slug, city.slug));
-        fs.writeFileSync(file, JSON.stringify(records));
-      } else if (site) {
-        records = await scrapeSite(site, { serviceSlug: s.slug, citySlug: city.slug, limit: MAX, log: console.log });
-        fs.writeFileSync(file, JSON.stringify(records));
-      } else throw new Error(`fonte sconosciuta: ${FONTE}`);
+      try {
+        if (REUSE && fs.existsSync(file)) {
+          records = JSON.parse(fs.readFileSync(file, "utf8"));
+        } else if (FONTE === "osm") {
+          if (!OSM_TAGS[s.slug]) { console.log(`${s.slug}: nessun tag OSM, salto`); continue; }
+          const r = await fetchOsm({ serviceSlug: s.slug, citySlug: city.slug, cityName: city.name });
+          records = r.records;
+          fs.writeFileSync(file, JSON.stringify(records));
+        } else if (FONTE === "maps") {
+          const query = `${((s.queries as string[]) ?? [s.name])[0]} ${city.name}`;
+          const places: MapsPlace[] = await searchMaps(browser!, query, { max: MAX, log: console.log });
+          records = places.map((p) => mapsToRecord(p, s.slug, city.slug));
+          fs.writeFileSync(file, JSON.stringify(records));
+        } else if (site) {
+          records = await scrapeSite(site, { serviceSlug: s.slug, citySlug: city.slug, limit: MAX, log: console.log });
+          fs.writeFileSync(file, JSON.stringify(records));
+        } else throw new Error(`fonte sconosciuta: ${FONTE}`);
+      } catch (e) {
+        // Una categoria che fallisce (Overpass 504, pagina che non carica)
+        // non deve far perdere le altre: si segnala e si va avanti.
+        if (String(e).includes("fonte sconosciuta")) throw e;
+        console.log(`${s.slug}: ERRORE, salto (${String(e).slice(0, 120)})`);
+        falliti.push(s.slug);
+        continue;
+      }
 
       // Fuori tema: chi cerca "idraulico" su Maps trova anche ferramenta e negozi.
       const match = s.googleMatch ? new RegExp(s.googleMatch, "i") : null;
@@ -91,6 +101,7 @@ async function main() {
 
   const stats = await importRecords(tutti, { dryRun: DRY, publish: flag("--publish"), log: DRY ? (l) => console.log("  " + l) : undefined });
   console.log(`${DRY ? "[dry] " : ""}record ${stats.total} · nuovi ${stats.created} · aggiornati ${stats.updated} · saltati ${stats.skipped} · fuori tema ${fuoriTema} · città non risolte ${stats.unresolvedCity}`);
+  if (falliti.length) console.log(`categorie fallite (rilanciare con --reuse): ${falliti.join(",")}`);
   if (!DRY && stats.created + stats.updated > 0) {
     await recalcAllScores();
     const p = await rebuildLandingPages();

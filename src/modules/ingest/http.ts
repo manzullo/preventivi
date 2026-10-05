@@ -76,7 +76,7 @@ export async function politeGet(url: string, opts: { minDelayMs?: number; accept
     const since = Date.now() - (lastHit.get(u.host) ?? 0);
     if (since < wait) await sleep(wait - since);
     lastHit.set(u.host, Date.now());
-    const res = await fetch(url, { headers: { "User-Agent": UA, Accept: opts.accept ?? "text/html,application/xhtml+xml", "Accept-Language": "it-IT,it;q=0.9" }, signal: AbortSignal.timeout(30_000) });
+    const res = await fetch(url, { headers: { "User-Agent": UA, Accept: opts.accept ?? "text/html,application/xhtml+xml", "Accept-Language": "it-IT,it;q=0.9" }, signal: AbortSignal.timeout(opts.api ? 180_000 : 30_000) });
     if (res.ok) return res.text();
     if ((res.status === 429 || res.status >= 500) && tentativo < 3) {
       await sleep(wait * 4 * tentativo);
