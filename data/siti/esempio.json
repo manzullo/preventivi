@@ -1,0 +1,10 @@
+{
+  "source": "esempio",
+  "start": "https://www.esempio.it/{categoria}/{citta}/",
+  "categorie": { "idraulici": "idraulici", "elettricisti": "elettricisti" },
+  "citta": { "reggio-emilia": "reggio-nell-emilia" },
+  "scheda": "^https://www\\.esempio\\.it/scheda/[^/]+/?$",
+  "successiva": "[?&]page=\\d+",
+  "maxPagine": 10,
+  "pausaMs": 3000
+}

@@ -86,7 +86,7 @@ export default async function AgencyPage({ params, searchParams }: { params: Par
   // Sedi in più della stessa azienda: una scheda sola, gli indirizzi elencati qui.
   const sediInPiu = (Array.isArray(a.locations) ? (a.locations as { via?: string; cap?: string; citta?: string }[]) : []).filter((l) => l && (l.via || l.citta));
   const social = Object.entries((a.social as Record<string, string | null> | null) ?? {}).filter((e): e is [string, string] => Boolean(e[1]));
-  const SOURCE_NAME: Record<string, string> = { pickanagency: "Pick an Agency", sortlist: "Sortlist", google: "Google", clutch: "Clutch", trustpilot: "Trustpilot", designrush: "DesignRush" };
+  const SOURCE_NAME: Record<string, string> = { google: "Google", google_maps: "Google", osm: "OpenStreetMap" };
   const faq = agencyFaq(a, { auto: site.faqAuto });
   const waHref =
     site.whatsappCta && a.whatsapp
@@ -265,6 +265,13 @@ export default async function AgencyPage({ params, searchParams }: { params: Par
               {social.map(([k, url]) => (
                 <a key={k} href={url} rel="nofollow noopener" target="_blank" className="font-semibold text-action capitalize">{k} ↗</a>
               ))}
+            </p>
+          )}
+          {a.source === "osm" && a.sourceUrl && (
+            // ODbL: chi mostra dati di OpenStreetMap deve citarne la fonte.
+            <p className="t-meta mt-4">
+              Dati della scheda:{" "}
+              <a href={a.sourceUrl} rel="nofollow noopener" target="_blank" className="font-semibold text-action">© OpenStreetMap contributors ↗</a>
             </p>
           )}
           {!a.verified && (

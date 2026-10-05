@@ -18,19 +18,34 @@ conviene farla leggere a un avvocato, soprattutto la parte GDPR.
 | **Iscrizione diretta e rivendicazione** | tutto, con consenso | `/candidatura/`, `/rivendica/` (già pronti) | nessun rischio | 0 € | Il canale da spingere appena c'è traffico |
 | ProntoPro, Instapro, PagineGialle, Houzz, StarOfService | — | — | i termini vietano l'estrazione e le banche dati sono protette | — | **Non si usano.** Al massimo come elenco dei nomi da cercare poi su fonti lecite |
 
-## 2. Proposta
+## 2. Gli scraper (decisione del 2026-10-05: niente Apify, scraper nostri)
 
-1. **Partenza:** Google Maps via Apify come su guidaagenzie, perché è l'unica
-   fonte che copre davvero gli artigiani, più OpenStreetMap dove ha dati.
-   Ogni scheda nasce in bozza (`published = false`) con `source` e `sourceUrl`.
-2. **Filtro:** la scoperta tiene solo i posti la cui categoria Google rientra
-   in `Service.googleMatch` (chi cerca "idraulico" trova anche ferramenta e
-   negozi di sanitari). Le regex sono in `scripts/seed-services.ts`.
-3. **Pubblicazione:** solo schede con telefono o sito e almeno una recensione;
-   le altre restano in bozza finché non si iscrivono o non vengono verificate.
-4. **Aggiornamento:** `apify-places` a cadenza per rating e recensioni.
-5. **Crescita:** rivendicazione e iscrizione diretta, con email al titolare
-   quando c'è un indirizzo.
+Un solo comando, `npm run scrape`, con tre fonti. Tutte salvano il grezzo in
+`data/raw/{fonte}/{città}-{categoria}.json`, scartano i fuori tema con
+`Service.googleMatch`, importano come bozze e ricalcolano punteggi e pagine.
+Le richieste passano da `src/modules/ingest/http.ts`: User-Agent dichiarato,
+robots.txt rispettato, una richiesta alla volta per sito con pausa, nuovi
+tentativi solo su 429 e 5xx.
+
+| Fonte | Codice | Come funziona | Limiti |
+|---|---|---|---|
+| `maps` | `src/modules/ingest/gmaps.ts` | Chrome vero (Playwright): cerca "categoria città" su Google Maps, scorre l'elenco, apre ogni scheda e legge nome, categoria, indirizzo, telefono, sito, voto, numero recensioni, coordinate | Va lanciato dal Mac (IP residenziale): da un server Google risponde col captcha. Il markup di Maps cambia: i selettori sono tutti in `SEL`. Pausa media 2,5 s a scheda. Rischio sui termini di Google, come per Apify |
+| `osm` | `src/modules/ingest/osm.ts` | Overpass: tutte le attività con i tag della categoria dentro il comune. 47 categorie su 53 hanno una corrispondenza in `OSM_TAGS` | Copertura bassa per gli artigiani; attribuzione "© OpenStreetMap contributors" mostrata in scheda |
+| `sito:{nome}` | `src/modules/ingest/sito.ts` | Directory che pubblicano i dati in JSON-LD (schema.org LocalBusiness): pagine elenco per categoria e città, link alle schede, pagine successive. Un sito nuovo è un file `data/siti/{nome}.json` (modello in `data/siti/esempio.json`) | Si ferma da solo dove robots.txt vieta. I termini d'uso di molte directory vietano l'estrazione: vanno letti sito per sito prima del giro completo |
+
+Prove fatte (2026-10-05, in locale, perché il container di sviluppo non
+raggiunge siti esterni): `sito` su un sito finto con 2 pagine elenco e 3 schede
+(3 importate, rilancio = 3 aggiornate, robots.txt rispettato); `maps` su una
+copia finta del markup di Maps (3 risultati, 1 scartato come "Ferramenta", 2
+importati con voto e numero di recensioni). Il primo giro vero su Maps serve a
+confermare i selettori.
+
+### Ordine consigliato
+
+1. `osm` su Roma, tutte le categorie: gratis e pulito, dà un primo nucleo.
+2. `maps` su Roma, 5 categorie, `--max 40`, dal Mac: misura tempi e scarto.
+3. Le directory scelte, una alla volta, con il file in `data/siti/`.
+4. Controllo a mano di un campione, poi pubblicazione.
 
 ## 3. GDPR: cosa serve prima di pubblicare
 
@@ -50,30 +65,30 @@ personali anche se pubblicati da loro.
 - **Recensioni:** si mostrano con fonte e link; non si copiano in blocco i testi
   delle recensioni Google sulle pagine elenco.
 
-## 4. Costo stimato del giro completo (scoperta)
+## 4. Tempi stimati del giro completo
 
-53 categorie × 115 capoluoghi = 6.095 query. A 50 risultati per query sono
-~305.000 risultati prima della deduplica:
-
-| Opzione | Stima |
-|---|---|
-| Solo scoperta, senza recensioni (0,0005 $) | ~150 $ |
-| Con 10 recensioni a scheda (0,0036 $) | ~1.100 $ |
-
-Conviene partire da 10 città e 20 categorie (~10 $ senza recensioni),
-misurare quante schede passano il filtro, e decidere il resto dopo.
+Con gli scraper nostri non c'è costo a risultato, c'è il tempo. Su Maps, a
+~3 s a scheda e 40 schede per ricerca, una categoria in una città richiede
+~2-3 minuti: 53 categorie × 115 capoluoghi sono ~250 ore di browser, quindi
+si va per priorità (città grandi e categorie con più ricerche) e a lotti
+notturni. OSM e le directory sono molto più veloci.
 
 ## 5. Comandi
 
 ```bash
-# prova a secco: quante query e quanto costerebbe, nessuna chiamata
-tsx scripts/apify-discover.ts --city roma --service idraulici --dry
+# OpenStreetMap, tutte le categorie, Roma
+INGEST_ENABLED=1 npm run scrape -- --fonte osm --city roma --service all --confirm
 
-# scoperta vera su una categoria in una città
-INGEST_ENABLED=1 tsx scripts/apify-discover.ts --city roma --service idraulici --num 50 --reviews 0 --budget 1 --confirm
+# Google Maps dal Mac, 5 categorie, prima a secco
+INGEST_ENABLED=1 npm run scrape -- --fonte maps --city roma --service idraulici,elettricisti,imbianchini,fotografi,commercialisti --max 40 --dry --confirm
+# HEADFUL=1 mostra il browser; CHROME_PATH sceglie un Chrome diverso da quello installato
 
-# arricchimento (place_id, recensioni, contatti) delle schede già in DB
-INGEST_ENABLED=1 tsx scripts/apify-places.ts --city roma --reviews 5 --budget 2 --confirm
+# una directory configurata in data/siti/nomesito.json
+INGEST_ENABLED=1 npm run scrape -- --fonte sito:nomesito --city milano --service idraulici --confirm
 
-npm run score && npm run pages:rebuild
+# rilegge il grezzo già scaricato, senza rete
+INGEST_ENABLED=1 npm run scrape -- --fonte maps --city roma --service idraulici --reuse --confirm
 ```
+
+Gli script Apify ereditati da guidaagenzie (`apify-discover.ts`,
+`apify-places.ts`) restano come alternativa a pagamento.

@@ -4,7 +4,7 @@
 export type IngestReview = { author?: string; rating: number; text?: string; publishedAt?: string; sourceUrl?: string; sourceRef: string };
 
 export type IngestRecord = {
-  source: string; // google_places | csv | application
+  source: string; // google_places | google_maps | osm | csv | application | nome del sito
   sourceRef: string; // place_id, riga csv, ...
   sourceUrl?: string;
   name: string;
@@ -19,6 +19,13 @@ export type IngestRecord = {
   description?: string;
   serviceSlugs: string[];
   reviews?: IngestReview[];
+  // Voto aggregato della fonte (media e numero di recensioni), quando la
+  // fonte non dà le recensioni una per una: finisce in Agency.externalRatings.
+  rating?: number;
+  reviewCount?: number;
+  // Categorie della fonte (Google Maps: "Idraulico", "Ferramenta"): servono
+  // a scartare i posti fuori tema con Service.googleMatch.
+  categories?: string[];
 };
 
 export type IngestStats = { total: number; created: number; updated: number; skipped: number; reviews: number; unresolvedCity: number };
@@ -30,6 +37,6 @@ export interface IngestSource {
 
 export function ingestAllowed(confirm: boolean): void {
   if (process.env.INGEST_ENABLED !== "1" || !confirm) {
-    throw new Error("Ingest di rete bloccato: serve INGEST_ENABLED=1 nell'ambiente e il flag --confirm. Scraping sospeso per decisione del 2026-09-08.");
+    throw new Error("Ingest di rete bloccato: serve INGEST_ENABLED=1 nell'ambiente e il flag --confirm.");
   }
 }

@@ -20,7 +20,8 @@
     "ingest": "tsx scripts/ingest.ts",
     "form:sync": "tsx scripts/sync-default-form.ts",
     "discover": "tsx scripts/apify-discover.ts",
-    "places": "tsx scripts/apify-places.ts"
+    "places": "tsx scripts/apify-places.ts",
+    "scrape": "tsx scripts/scrape.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",
@@ -39,6 +40,7 @@
     "@types/nodemailer": "^8.0.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "playwright-core": "^1.56.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.13",
     "typescript": "^5"

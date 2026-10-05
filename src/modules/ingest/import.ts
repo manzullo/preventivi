@@ -69,6 +69,13 @@ export async function importRecords(records: IngestRecord[], opts: { dryRun?: bo
       : await db.agency.create({ data: { ...data, slug: await uniqueAgencySlug(r.name, city?.slug), published: Boolean(opts.publish) } });
     existing ? stats.updated++ : stats.created++;
 
+    if (r.rating && r.reviewCount) {
+      const cur = existing ? await db.agency.findUnique({ where: { id: agency.id }, select: { externalRatings: true } }) : null;
+      const altre = (Array.isArray(cur?.externalRatings) ? (cur.externalRatings as { source: string }[]) : []).filter((e) => e.source !== r.source);
+      const voto = { source: r.source, rating: r.rating, count: r.reviewCount, url: r.sourceUrl, fetchedAt: new Date().toISOString() };
+      await db.agency.update({ where: { id: agency.id }, data: { externalRatings: [...altre, voto] as never } });
+    }
+
     for (const sid of serviceIds) {
       await db.agencyService.upsert({ where: { agencyId_serviceId: { agencyId: agency.id, serviceId: sid } }, create: { agencyId: agency.id, serviceId: sid }, update: {} });
     }
