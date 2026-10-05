@@ -1,4 +1,7 @@
-// La competenza dentro una città: "professionisti food marketing a Roma".
+// La competenza dentro una città: "Riparazione caldaia a Roma". Prima chi la
+// dichiara, poi (sulla prima pagina) gli altri professionisti della categoria
+// in cui quella competenza sta di solito, perché la pagina serva anche quando
+// chi la dichiara sono pochi.
 //
 // Esiste finché in quella città c'è almeno un professionista che la dichiara, ma si
 // fa indicizzare solo sopra SKILL_CITY_MIN: con due schede sarebbe una copia
@@ -16,7 +19,7 @@ import { db } from "@/lib/db";
 import { CURRENT_YEAR, PAGE_SIZE, fmt, paths, plural } from "@/lib/site";
 import { agencyCardSelect, agencyOrder, cityScopeIds, parsePage } from "@/modules/directory/listing";
 import { collectionPageJsonLd, pageMeta } from "@/modules/directory/seo";
-import { SKILL_CITY_MIN, cittaDiCompetenza, competenzaDaSlug, whereCompetenza } from "@/modules/directory/skills";
+import { SKILL_CITY_MIN, cittaDiCompetenza, competenzaDaSlug, servizioPrevalente, whereCompetenza } from "@/modules/directory/skills";
 
 export const revalidate = 3600;
 
@@ -45,8 +48,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   if (!d) return { robots: { index: false, follow: false } };
   const nome = d.c.nome;
   const meta = pageMeta({
-    title: `Le migliori professionisti ${nome} di ${d.city.name}: classifica ${CURRENT_YEAR}`,
-    description: `Le ${fmt(d.totale)} professionisti di ${d.city.name} che lavorano su ${nome}: recensioni con la fonte, budget minimo e contatti diretti. Un modulo, fino a 3 preventivi gratis.`,
+    title: `${nome} a ${d.city.name}: ${fmt(d.totale)} ${plural(d.totale, "professionista", "professionisti")} a confronto (${CURRENT_YEAR})`,
+    description: `${nome} a ${d.city.name}: ${fmt(d.totale)} ${plural(d.totale, "professionista che lo fa", "professionisti che lo fanno")}, ordinati per recensioni con la fonte e con i contatti diretti. Un modulo, fino a 3 preventivi gratis.`,
     path: paths.skillCity(d.c.slug, d.city.slug),
   });
   // Poche schede: la pagina serve a chi ci arriva, non ai motori di ricerca.
@@ -64,7 +67,7 @@ export default async function CompetenzaCittaPage({ params, searchParams }: { pa
   const pagine = Math.max(1, Math.ceil(totale / PAGE_SIZE));
   const pagina = Math.min(parsePage(sp), pagine);
 
-  const [items, altreCitta] = await Promise.all([
+  const [items, altreCitta, servizio] = await Promise.all([
     db.agency.findMany({
       where,
       select: agencyCardSelect,
@@ -73,7 +76,25 @@ export default async function CompetenzaCittaPage({ params, searchParams }: { pa
       take: PAGE_SIZE,
     }),
     cittaDiCompetenza(c.nome),
+    servizioPrevalente(c.nome, await cityScopeIds(city)),
   ]);
+  // Riserva: gli altri della stessa categoria in città, solo in prima pagina.
+  const riserva =
+    servizio && pagina === 1
+      ? await db.agency.findMany({
+          where: {
+            published: true,
+            cityId: { in: await cityScopeIds(city) },
+            services: { some: { service: { slug: servizio.slug } } },
+            // Non NOT(skills contiene ...): con skills vuoto il confronto dà
+            // null e la riga sparirebbe; si escludono per id.
+            id: { notIn: (await db.agency.findMany({ where, select: { id: true } })).map((x) => x.id) },
+          },
+          select: agencyCardSelect,
+          orderBy: agencyOrder,
+          take: PAGE_SIZE,
+        })
+      : [];
   const vicine = altreCitta.filter((x) => x.slug !== city.slug).slice(0, 11);
 
   return (
@@ -89,15 +110,16 @@ export default async function CompetenzaCittaPage({ params, searchParams }: { pa
 
       <p className="t-kicker mb-2">{city.region ? `${city.region.name} · ${city.name}` : city.name}</p>
       <h1 className="t-h1">
-        Professionisti {c.nome} a {city.name} {CURRENT_YEAR}
+        {c.nome} a {city.name}
       </h1>
       <p className="t-lead mt-3 max-w-3xl">
-        Confronta le migliori professionisti {c.nome} di {city.name} e scegli quella più adatta.
+        Chi fa {c.nome.toLowerCase()} a {city.name}, ordinato per recensioni con la fonte. Descrivi il lavoro e ricevi fino a 3
+        preventivi gratis.
       </p>
       <p className="t-meta mt-3 max-w-3xl">
-        Trovate {fmt(totale)} professionisti {c.nome} a {city.name} ordinate per recensioni pubbliche verificabili.{" "}
+        {fmt(totale)} {plural(totale, "professionista dichiara", "professionisti dichiarano")} di fare {c.nome.toLowerCase()} a {city.name}.{" "}
         <Link href={paths.skill(c.slug)} className="font-semibold text-action hover:underline">
-          Vedi tutte i professionisti {c.nome} in Italia
+          {c.nome} in tutta Italia
         </Link>
         .
       </p>
@@ -139,9 +161,28 @@ export default async function CompetenzaCittaPage({ params, searchParams }: { pa
         </nav>
       )}
 
+      {riserva.length > 0 && servizio && (
+        <section className="mt-12">
+          <div className="mb-5 flex items-center justify-between border-b border-line pb-3">
+            <p className="t-kicker">Altri {servizio.plural.toLowerCase()} a {city.name}</p>
+            <Link href={paths.serviceCity(servizio.slug, city.slug)} className="t-kicker text-action hover:underline">
+              Tutti →
+            </Link>
+          </div>
+          <p className="t-meta mb-4 max-w-3xl">
+            Non scrivono di fare {c.nome.toLowerCase()}, ma lavorano nella stessa categoria: chiedi nel preventivo.
+          </p>
+          <div className="grid gap-4 md:grid-cols-2">
+            {riserva.map((a) => (
+              <AgencyCard key={a.id} agency={a} />
+            ))}
+          </div>
+        </section>
+      )}
+
       <div className="mt-12">
         <QuoteBox
-          href={paths.quote({ citta: city.slug })}
+          href={paths.quote({ citta: city.slug, ...(servizio ? { servizio: servizio.slug } : {}) })}
           position="end"
           context={`Ti serve ${c.nome.toLowerCase()} a ${city.name}?`}
         />
@@ -162,8 +203,8 @@ export default async function CompetenzaCittaPage({ params, searchParams }: { pa
 
       <JsonLd
         data={collectionPageJsonLd({
-          name: `Professionisti ${c.nome.toLowerCase()} a ${city.name}`,
-          description: `${totale} professionisti di ${city.name} che dichiarano ${c.nome.toLowerCase()}, ordinate per recensioni.`,
+          name: `${c.nome} a ${city.name}`,
+          description: `${totale} professionisti di ${city.name} che dichiarano di fare ${c.nome.toLowerCase()}, ordinati per recensioni.`,
           path: base,
           total: totale,
         })}

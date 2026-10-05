@@ -140,3 +140,24 @@ export async function coppieCompetenzaCitta(min = SKILL_CITY_MIN): Promise<{ ski
     .filter(([, n]) => n >= min)
     .map(([k]) => ({ skill: k.split("|")[0], citta: k.split("|")[1] }));
 }
+
+export type ServizioPrevalente = { slug: string; plural: string; name: string };
+
+/**
+ * La categoria di chi dichiara la competenza (per "Riparazione caldaia" di
+ * solito Idraulici): serve a riempire la pagina con gli altri professionisti
+ * di quella categoria quando chi dichiara la competenza sono pochi.
+ */
+export async function servizioPrevalente(nome: string, cityIds?: string[]): Promise<ServizioPrevalente | null> {
+  const righe = await db.agencyService.findMany({
+    where: { agency: { published: true, ...(cityIds ? { cityId: { in: cityIds } } : {}), ...whereCompetenza(nome) } },
+    select: { service: { select: { slug: true, plural: true, name: true } } },
+  });
+  const conta = new Map<string, { s: ServizioPrevalente; n: number }>();
+  for (const r of righe) {
+    const c = conta.get(r.service.slug);
+    if (c) c.n += 1;
+    else conta.set(r.service.slug, { s: r.service, n: 1 });
+  }
+  return [...conta.values()].sort((a, b) => b.n - a.n)[0]?.s ?? null;
+}

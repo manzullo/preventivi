@@ -1,6 +1,6 @@
-// Professionisti che dichiarano una competenza precisa: "WordPress", "Link building",
-// "Marketing B2B". Sono i mestieri dentro il servizio, quelli che una persona
-// cerca quando sa già cosa le serve.
+// Professionisti che dichiarano una competenza precisa: "Riparazione caldaia",
+// "Sblocco scarichi", "Foto di matrimonio". Sono i lavori dentro la categoria,
+// quelli che una persona cerca quando sa già cosa le serve.
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -29,8 +29,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const c = await competenzaDaSlug(slug);
   if (!c) return { robots: { index: false, follow: false } };
   return pageMeta({
-    title: `Le migliori professionisti ${c.nome} in Italia: classifica ${CURRENT_YEAR}`,
-    description: `Le ${fmt(c.totale)} professionisti italiani che lavorano su ${c.nome}: recensioni con la fonte, budget minimo e contatti diretti. Preventivi gratis in due minuti.`,
+    title: `${c.nome}: ${fmt(c.totale)} professionisti a confronto, città per città (${CURRENT_YEAR})`,
+    description: `${c.nome}: ${fmt(c.totale)} professionisti in Italia che lo fanno, ordinati per recensioni con la fonte e con i contatti diretti. Preventivi gratis in due minuti.`,
     path: `/competenze/${c.slug}/`,
   });
 }
@@ -66,13 +66,15 @@ export default async function CompetenzaPage({ params, searchParams }: { params:
         ]}
       />
 
-      <p className="t-kicker mb-2">Competenza dichiarata dai professionisti</p>
+      <p className="t-kicker mb-2">Il lavoro che ti serve</p>
       <h1 className="t-h1">
-        Professionisti {c.nome} in Italia {CURRENT_YEAR}
+        {c.nome}: chi lo fa, città per città
       </h1>
-      <p className="t-lead mt-3 max-w-3xl">Confronta le migliori professionisti {c.nome} italiane e scegli quella più adatta.</p>
+      <p className="t-lead mt-3 max-w-3xl">
+        Scegli la città per vedere chi fa {c.nome.toLowerCase()} vicino a te, ordinato per recensioni con la fonte.
+      </p>
       <p className="t-meta mt-3 max-w-3xl">
-        Trovate {fmt(totale)} professionisti {c.nome} in Italia ordinate per recensioni pubbliche verificabili.
+        {fmt(totale)} {plural(totale, "professionista dichiara", "professionisti dichiarano")} di fare {c.nome.toLowerCase()} in Italia.
       </p>
 
       {perCitta.length > 0 && (
@@ -140,8 +142,8 @@ export default async function CompetenzaPage({ params, searchParams }: { params:
 
       <JsonLd
         data={collectionPageJsonLd({
-          name: `Professionisti ${c.nome.toLowerCase()}`,
-          description: `${totale} professionisti italiani che dichiarano ${c.nome.toLowerCase()}, ordinate per recensioni.`,
+          name: c.nome,
+          description: `${totale} professionisti in Italia che dichiarano di fare ${c.nome.toLowerCase()}, ordinati per recensioni.`,
           path: base,
           total: totale,
         })}
