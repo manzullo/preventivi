@@ -32,7 +32,10 @@ export function parseExternal(raw: unknown): ExternalRating[] {
   if (!Array.isArray(raw)) return [];
   return raw
     .filter((x): x is ExternalRating => Boolean(x) && typeof x === "object" && typeof (x as ExternalRating).rating === "number" && (x as ExternalRating).rating > 0 && (x as ExternalRating).rating <= 5)
-    .map((x) => ({ ...x, count: Number(x.count) > 0 ? Number(x.count) : 0 }));
+    .map((x) => ({ ...x, count: Number(x.count) > 0 ? Number(x.count) : 0 }))
+    // Lo stesso posto Google letto due volte: dallo scraper di Maps (solo
+    // stelle) e da Apify con il numero di recensioni. Vale il secondo.
+    .filter((x, _i, all) => x.source !== "google_maps" || !all.some((y) => y.source === "google" && Number(y.count) > 0));
 }
 
 function round(n: number): number {
