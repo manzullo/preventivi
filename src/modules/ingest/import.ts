@@ -53,6 +53,7 @@ export async function importRecords(records: IngestRecord[], opts: { dryRun?: bo
       lat: r.lat,
       lng: r.lng,
       description: r.description,
+      sourceDescription: r.sourceDescription,
       cityId: city?.id,
       source: r.source,
       sourceRef: r.sourceRef,

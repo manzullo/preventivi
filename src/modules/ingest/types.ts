@@ -17,6 +17,9 @@ export type IngestRecord = {
   lat?: number;
   lng?: number;
   description?: string;
+  // Testo grezzo della fonte che non si pubblica (es. i servizi elencati da
+  // PagineGialle): serve a dedurre le competenze, vedi scripts/competenze.ts.
+  sourceDescription?: string;
   serviceSlugs: string[];
   reviews?: IngestReview[];
   // Voto aggregato della fonte (media e numero di recensioni), quando la

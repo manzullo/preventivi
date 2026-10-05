@@ -69,6 +69,16 @@ const isBusiness = (o: Ld) => [o["@type"]].flat().some((t) => typeof t === "stri
 // Alcune directory (PagineGialle) mettono HTML nella descrizione JSON-LD.
 const senzaHtml = (t?: string) => t?.replace(/<br\s*\/?>|<\/p>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/\n{3,}/g, "\n\n").trim() || undefined;
 
+/** I servizi offerti (schema.org makesOffer), uno per riga: "Servizi: a; b". */
+const offerte = (o: Ld) => {
+  const v = [o.makesOffer]
+    .flat()
+    .map((x) => (x && typeof x === "object" ? ((x as Ld).itemOffered as Ld | undefined) : undefined))
+    .map((i) => (i ? str(i.category) ?? str(i.name) : undefined))
+    .filter((x): x is string => Boolean(x));
+  return v.length ? `Servizi: ${[...new Set(v)].join("; ")}` : undefined;
+};
+
 const contatto = (o: Ld, k: string) => [o.contactPoint].flat().map((c) => (c && typeof c === "object" ? str((c as Ld)[k]) : undefined)).find(Boolean);
 
 /**
@@ -142,6 +152,7 @@ export function mapLdBusiness(o: Ld, ctx: { source: string; url: string; service
     lat: Number.isFinite(lat) ? lat : undefined,
     lng: Number.isFinite(lng) ? lng : undefined,
     description: senzaHtml(str(o.description)),
+    sourceDescription: offerte(o),
     serviceSlugs: [ctx.serviceSlug],
     reviews,
   };

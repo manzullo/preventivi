@@ -21,7 +21,9 @@
     "form:sync": "tsx scripts/sync-default-form.ts",
     "discover": "tsx scripts/apify-discover.ts",
     "places": "tsx scripts/apify-places.ts",
-    "scrape": "tsx scripts/scrape.ts"
+    "scrape": "tsx scripts/scrape.ts",
+    "competenze:vocabolario": "tsx scripts/vocabolario-competenze.ts",
+    "competenze": "tsx scripts/competenze.ts"
   },
   "dependencies": {
     "@prisma/client": "6.19.3",
