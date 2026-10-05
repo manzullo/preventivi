@@ -225,7 +225,7 @@ export default async function RecensioniAgenzia({ params, searchParams }: { para
             <p className="t-body mt-2 max-w-3xl text-ink-2">
               Le altre {fmt(soloConteggiate)} arrivano dalle valutazioni complessive delle fonti
               {esterni.length
-                ? ` (${esterni.map((e) => `${etichetta(e.source)} ${e.rating.toFixed(1)} su ${fmt(e.count)}`).join(", ")})`
+                ? ` (${esterni.map((e) => (e.count > 0 ? `${etichetta(e.source)} ${e.rating.toFixed(1)} su ${fmt(e.count)}` : `${etichetta(e.source)} ${e.rating.toFixed(1)}`)).join(", ")})`
                 : ""}
               : contano nella media, ma il testo resta sul sito della fonte.
             </p>

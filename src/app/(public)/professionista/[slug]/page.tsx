@@ -123,7 +123,7 @@ export default async function AgencyPage({ params, searchParams }: { params: Par
                 <span key={e.source}>
                   {i > 0 && " · "}
                   <a href={e.url} rel="noopener" target="_blank" className="font-semibold text-action">
-                    {fmt(e.count)} su {SOURCE_NAME[e.source] ?? e.source} ({e.rating.toFixed(1)}) ↗
+                    {e.count > 0 ? `${fmt(e.count)} su ${SOURCE_NAME[e.source] ?? e.source} (${e.rating.toFixed(1)})` : `${e.rating.toFixed(1).replace(".", ",")} su ${SOURCE_NAME[e.source] ?? e.source}`} ↗
                   </a>
                 </span>
               ))}

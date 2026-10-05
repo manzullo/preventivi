@@ -135,16 +135,18 @@ export function Rating({
   count: number;
   size?: "md" | "lg";
 }) {
-  if (!count || value === null) {
+  if (value === null) {
     return <span className="t-meta text-ink-3">Nessuna recensione</span>;
   }
+  // count 0 con un voto: le stelle vengono da una fonte che non dice quante
+  // recensioni ha (Google Maps senza login).
   return (
     <span className={cn("inline-flex items-center gap-1.5", size === "lg" ? "text-base" : "text-sm")}>
       <span aria-hidden className="text-star">
         ★
       </span>
       <span className="font-extrabold text-ink">{value.toLocaleString("it-IT", { maximumFractionDigits: 1 })}</span>
-      <span className="text-ink-3">({count})</span>
+      {count > 0 && <span className="text-ink-3">({count})</span>}
     </span>
   );
 }

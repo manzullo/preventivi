@@ -20,10 +20,19 @@ const MONTH_MS = 1000 * 60 * 60 * 24 * 30.44;
 type ReviewLike = { rating: number; publishedAt: Date | null };
 export type ExternalRating = { source: string; rating: number; count: number; url?: string; fetchedAt?: string };
 
-/** Rating esterni validi (fonte, media 1-5, conteggio > 0). */
+/**
+ * Voto delle fonti senza numero di recensioni (Google Maps senza login mostra
+ * solo le stelle): nel punteggio vale come questo numero di recensioni, così
+ * ordina ma pesa poco e lascia passare avanti chi ha recensioni vere.
+ */
+export const EXTERNAL_NOMINAL_COUNT = 3;
+
+/** Rating esterni validi (fonte, media 1-5); count 0 = numero non noto. */
 export function parseExternal(raw: unknown): ExternalRating[] {
   if (!Array.isArray(raw)) return [];
-  return raw.filter((x): x is ExternalRating => Boolean(x) && typeof x === "object" && typeof (x as ExternalRating).rating === "number" && (x as ExternalRating).rating > 0 && (x as ExternalRating).rating <= 5 && Number((x as ExternalRating).count) > 0);
+  return raw
+    .filter((x): x is ExternalRating => Boolean(x) && typeof x === "object" && typeof (x as ExternalRating).rating === "number" && (x as ExternalRating).rating > 0 && (x as ExternalRating).rating <= 5)
+    .map((x) => ({ ...x, count: Number(x.count) > 0 ? Number(x.count) : 0 }));
 }
 
 function round(n: number): number {
@@ -38,11 +47,14 @@ export function computeScore(
 ): { score: number; rating: number | null; reviewCount: number } {
   // Le fonti esterne entrano come aggregati: count recensioni alla loro media,
   // datate al momento della lettura (sono fresche per definizione).
+  // Senza numero noto il voto pesa EXTERNAL_NOMINAL_COUNT, ma non si conta
+  // fra le recensioni mostrate.
+  const peso = (e: ExternalRating) => (e.count > 0 ? e.count : EXTERNAL_NOMINAL_COUNT);
   const extCount = externals.reduce((a, e) => a + e.count, 0);
-  const v = reviews.length + extCount;
+  const v = reviews.length + externals.reduce((a, e) => a + peso(e), 0);
   if (v === 0) return { score: 0, rating: null, reviewCount: 0 };
 
-  const sum = reviews.reduce((acc, r) => acc + r.rating, 0) + externals.reduce((a, e) => a + e.rating * e.count, 0);
+  const sum = reviews.reduce((acc, r) => acc + r.rating, 0) + externals.reduce((a, e) => a + e.rating * peso(e), 0);
   const mean = sum / v;
   const bayes = (v / (v + CONFIDENCE_M)) * mean + (CONFIDENCE_M / (v + CONFIDENCE_M)) * globalMean;
 
@@ -54,7 +66,7 @@ export function computeScore(
     : HALF_LIFE_MONTHS * 2;
   const decay = Math.max(DECAY_FLOOR, Math.pow(0.5, months / HALF_LIFE_MONTHS));
 
-  return { score: round(bayes * decay), rating: round(mean), reviewCount: v };
+  return { score: round(bayes * decay), rating: round(mean), reviewCount: reviews.length + extCount };
 }
 
 export async function globalMean(): Promise<number> {

@@ -70,6 +70,29 @@ export async function AgencyReviews({
   // di cui non abbiamo il testo: qui si dice sempre quante sono leggibili.
   const totaleTutte = Math.max(totaleDichiarato ?? 0, conDettaglio);
   const soloConteggiate = Math.max(0, totaleTutte - conDettaglio);
+  const soloStelle = esterni.filter((e) => e.count === 0);
+  if (totaleTutte === 0 && soloStelle.length) {
+    return (
+      <section id="recensioni" className="mt-14">
+        <p className="t-kicker mb-2">Recensioni</p>
+        <h2 className="t-h2">
+          {soloStelle.map((e) => `${e.rating.toFixed(1).replace(".", ",")} su ${etichetta(e.source)}`).join(" · ")}
+        </h2>
+        <p className="t-body mt-2 text-ink-2">
+          È il voto medio che {nome} ha sulla fonte. Le recensioni si leggono lì
+          {soloStelle[0].url && (
+            <>
+              :{" "}
+              <a href={soloStelle[0].url} rel="noopener" target="_blank" className="font-semibold text-action">
+                apri su {etichetta(soloStelle[0].source)} ↗
+              </a>
+            </>
+          )}
+          .
+        </p>
+      </section>
+    );
+  }
   if (totaleTutte === 0) {
     return (
       <section id="recensioni" className="mt-14">
@@ -96,7 +119,7 @@ export async function AgencyReviews({
         <p className="t-body mt-2 max-w-3xl text-ink-2">
           {fmt(conDettaglio)} {plural(conDettaglio, "è leggibile qui", "sono leggibili qui")} con autore, data e link all&apos;originale.
           Le altre {fmt(soloConteggiate)} arrivano dalle valutazioni complessive delle fonti
-          {esterni.length ? ` (${esterni.map((e) => `${etichetta(e.source)} ${e.rating.toFixed(1)} su ${fmt(e.count)}`).join(", ")})` : ""}:
+          {esterni.length ? ` (${esterni.map((e) => (e.count > 0 ? `${etichetta(e.source)} ${e.rating.toFixed(1)} su ${fmt(e.count)}` : `${etichetta(e.source)} ${e.rating.toFixed(1)}`)).join(", ")})` : ""}:
           contano nel punteggio, ma il testo resta sul sito della fonte.
         </p>
       )}
