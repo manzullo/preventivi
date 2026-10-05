@@ -74,7 +74,7 @@ export default async function AgencyEdit({ params, searchParams }: { params: Pro
         <F label="Meta description (vuota = automatica)"><input name="metaDescription" className={IN} maxLength={170} defaultValue={a?.metaDescription ?? ""} /></F>
         <F label="Competenze (separate da virgola; dal sito e dalle fonti, modificabili)" wide><textarea name="skills" rows={2} className={IN} defaultValue={(Array.isArray(a?.skills) ? (a!.skills as string[]) : []).join(", ")} /></F>
         {Array.isArray(a?.externalRatings) && (a!.externalRatings as { source: string; rating: number; count: number; url: string }[]).length > 0 && (
-          <p className="t-meta sm:col-span-2">Rating esterni: {(a!.externalRatings as { source: string; rating: number; count: number; url: string }[]).map((e) => `${e.source} ${e.rating} (${e.count})`).join(" · ")} · settori: {(Array.isArray(a?.industries) ? (a!.industries as string[]) : []).join(", ") || "—"}</p>
+          <p className="t-meta sm:col-span-2">Rating esterni: {(a!.externalRatings as { source: string; rating: number; count: number; url: string }[]).map((e) => `${e.source} ${e.rating}${e.count ? ` (${e.count})` : ""}`).join(" · ")} · settori: {(Array.isArray(a?.industries) ? (a!.industries as string[]) : []).join(", ") || "—"}</p>
         )}
         <F label="FAQ personalizzate (una per riga: Domanda? | Risposta), in aggiunta a quelle automatiche" wide><textarea name="faq" rows={4} className={IN} defaultValue={faqToText(customFaq(a?.faq))} placeholder="Lavorate anche da remoto? | Sì, seguiamo clienti in tutta Italia." /></F>
         <div className="sm:col-span-2">

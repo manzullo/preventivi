@@ -1,10 +1,15 @@
 import { db } from "@/lib/db";
 
+// Domini condivisi da tante attività (social, link-in-bio, directory): come
+// "sito" non identificano nessuno e non devono far unire schede diverse.
+const CONDIVISI = /(^|\.)(facebook\.com|fb\.com|instagram\.com|linktr\.ee|tiktok\.com|linkedin\.com|youtube\.com|twitter\.com|x\.com|wa\.me|whatsapp\.com|google\.com|g\.page|business\.site|goo\.gl|paginegialle\.it|prontopro\.it)$/;
+
 export function normalizeDomain(url?: string | null): string | undefined {
   if (!url) return undefined;
   try {
     const u = new URL(url.startsWith("http") ? url : `https://${url}`);
-    return u.hostname.replace(/^www\./, "").toLowerCase() || undefined;
+    const host = u.hostname.replace(/^www\./, "").toLowerCase();
+    return host && !CONDIVISI.test(host) ? host : undefined;
   } catch {
     return undefined;
   }

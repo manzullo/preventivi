@@ -69,10 +69,12 @@ export async function importRecords(records: IngestRecord[], opts: { dryRun?: bo
       : await db.agency.create({ data: { ...data, slug: await uniqueAgencySlug(r.name, city?.slug), published: Boolean(opts.publish) } });
     existing ? stats.updated++ : stats.created++;
 
-    if (r.rating && r.reviewCount) {
+    // Google Maps senza login dà il voto ma non il numero di recensioni:
+    // il voto si tiene lo stesso, con count null.
+    if (r.rating) {
       const cur = existing ? await db.agency.findUnique({ where: { id: agency.id }, select: { externalRatings: true } }) : null;
       const altre = (Array.isArray(cur?.externalRatings) ? (cur.externalRatings as { source: string }[]) : []).filter((e) => e.source !== r.source);
-      const voto = { source: r.source, rating: r.rating, count: r.reviewCount, url: r.sourceUrl, fetchedAt: new Date().toISOString() };
+      const voto = { source: r.source, rating: r.rating, count: r.reviewCount ?? null, url: r.sourceUrl, fetchedAt: new Date().toISOString() };
       await db.agency.update({ where: { id: agency.id }, data: { externalRatings: [...altre, voto] as never } });
     }
 

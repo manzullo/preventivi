@@ -28,6 +28,11 @@ export type SiteConfig = {
   maxPagine?: number;
   /** Pausa minima fra due richieste allo stesso sito, in ms. */
   pausaMs?: number;
+  /**
+   * Come leggere la scheda: "jsonld" (predefinito) o "prontopro", che non
+   * pubblica JSON-LD ma il profilo nei dati di Next.js (__NEXT_DATA__).
+   */
+  estrattore?: "jsonld" | "prontopro";
 };
 
 const BUSINESS = /LocalBusiness|Organization|ProfessionalService|HomeAndConstructionBusiness|Plumber|Electrician|HousePainter|Locksmith|RoofingContractor|GeneralContractor|HVACBusiness|MovingCompany|Attorney|LegalService|AccountingService|Notary|Dentist|Physician|MedicalBusiness|HealthAndBeautyBusiness|BeautySalon|HairSalon|DaySpa|AutoRepair|AutoBodyShop|Florist|Store|FoodEstablishment|EducationalOrganization|Photograph/i;
@@ -60,6 +65,37 @@ export function jsonLdObjects(html: string): Ld[] {
 }
 
 const isBusiness = (o: Ld) => [o["@type"]].flat().some((t) => typeof t === "string" && BUSINESS.test(t));
+
+const contatto = (o: Ld, k: string) => [o.contactPoint].flat().map((c) => (c && typeof c === "object" ? str((c as Ld)[k]) : undefined)).find(Boolean);
+
+/**
+ * Scheda ProntoPro → IngestRecord. ProntoPro mostra nome, categoria, città e
+ * presentazione; telefono, sito, indirizzo e recensioni no (li vende come
+ * contatti): serve per la cernita dei nomi, i recapiti vanno cercati altrove.
+ */
+export function mapProntoPro(html: string, ctx: { source: string; url: string; serviceSlug: string; citySlug: string }): IngestRecord | null {
+  const raw = /<script[^>]*id="__NEXT_DATA__"[^>]*>([\s\S]*?)<\/script>/.exec(html)?.[1];
+  if (!raw) return null;
+  let p: Ld | undefined;
+  try {
+    p = (JSON.parse(raw) as { props?: { pageProps?: { proProfile?: Ld } } }).props?.pageProps?.proProfile;
+  } catch {
+    return null;
+  }
+  const name = str(p?.userBusinessName);
+  if (!p || !name) return null;
+  return {
+    source: ctx.source,
+    sourceRef: `${ctx.source}:${str(p.profileId) ?? ctx.url}`,
+    sourceUrl: ctx.url,
+    name,
+    cityName: str(p.cityName) ?? ctx.citySlug,
+    description: str(p.profileDescription),
+    serviceSlugs: [ctx.serviceSlug],
+    reviews: [],
+    categories: [str(p.serviceName)].filter((x): x is string => Boolean(x)),
+  };
+}
 
 /** Oggetto JSON-LD di un'attività → IngestRecord. */
 export function mapLdBusiness(o: Ld, ctx: { source: string; url: string; serviceSlug: string; citySlug: string }): IngestRecord | null {
@@ -94,8 +130,9 @@ export function mapLdBusiness(o: Ld, ctx: { source: string; url: string; service
     sourceUrl: ctx.url,
     name,
     website,
-    phone: str(first(o.telephone)),
-    email: str(first(o.email))?.replace(/^mailto:/i, ""),
+    // PagineGialle mette telefono ed email (anche) in contactPoint.
+    phone: str(first(o.telephone)) ?? contatto(o, "telephone"),
+    email: (str(first(o.email)) ?? contatto(o, "email"))?.replace(/^mailto:/i, ""),
     street: str(addr.streetAddress),
     postalCode: str(addr.postalCode),
     cityName: str(addr.addressLocality) ?? ctx.citySlug,
@@ -152,10 +189,11 @@ export async function scrapeSite(cfg: SiteConfig, opts: { serviceSlug: string; c
   for (const url of [...schede].slice(0, opts.limit ?? Infinity)) {
     try {
       const html = await politeGet(url, { minDelayMs: cfg.pausaMs });
-      const ld = jsonLdObjects(html).find(isBusiness);
-      const rec = ld ? mapLdBusiness(ld, { source: cfg.source, url, serviceSlug: opts.serviceSlug, citySlug: opts.citySlug }) : null;
+      const ctx = { source: cfg.source, url, serviceSlug: opts.serviceSlug, citySlug: opts.citySlug };
+      const ld = cfg.estrattore === "prontopro" ? undefined : jsonLdObjects(html).find(isBusiness);
+      const rec = cfg.estrattore === "prontopro" ? mapProntoPro(html, ctx) : ld ? mapLdBusiness(ld, ctx) : null;
       if (rec) out.push(rec);
-      log(`${rec ? "ok" : "senza JSON-LD"}: ${url}`);
+      log(`${rec ? "ok" : "senza dati"}: ${url}`);
     } catch (e) {
       log(`errore: ${url} · ${String(e)}`);
     }
