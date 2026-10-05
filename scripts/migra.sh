@@ -1,6 +1,6 @@
 #!/bin/sh
 # Applica le migrazioni al database di produzione, da eseguire sul server
-# dentro /root/preventivi. Usa un contenitore usa e getta, così l'immagine
+# dentro /root/misterwolf. Usa un contenitore usa e getta, così l'immagine
 # dell'applicazione resta leggera.
 set -e
 cd "$(dirname "$0")/.."

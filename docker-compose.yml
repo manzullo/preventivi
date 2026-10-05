@@ -22,27 +22,28 @@ services:
         condition: service_healthy
     ports:
       # Solo dal server stesso: il traffico pubblico passa dal proxy.
-      - "127.0.0.1:4450:4450"
+      # Sull'host 4460: la 4450 è già del centralino.
+      - "127.0.0.1:4460:4450"
     networks: [coolify, interna]
     labels:
       - traefik.enable=true
       - traefik.docker.network=coolify
-      # Dominio ufficiale, senza www.
-      - traefik.http.routers.preventivi.rule=Host(`${SITE_HOST}`)
+      # Indirizzo ufficiale con www (scelta di Ale per misterwolf.org).
+      - traefik.http.routers.preventivi.rule=Host(`www.${SITE_HOST}`)
       - traefik.http.routers.preventivi.entrypoints=https
       - traefik.http.routers.preventivi.tls=true
       - traefik.http.routers.preventivi.tls.certresolver=letsencrypt
       - traefik.http.services.preventivi.loadbalancer.server.port=4450
-      # www manda al dominio senza www, così l'indirizzo buono è uno solo.
-      - traefik.http.routers.preventivi-www.rule=Host(`www.${SITE_HOST}`)
-      - traefik.http.routers.preventivi-www.entrypoints=https
-      - traefik.http.routers.preventivi-www.tls=true
-      - traefik.http.routers.preventivi-www.tls.certresolver=letsencrypt
-      - traefik.http.routers.preventivi-www.middlewares=preventivi-nowww
-      - traefik.http.routers.preventivi-www.service=preventivi
-      - traefik.http.middlewares.preventivi-nowww.redirectregex.regex=^https://www\.${SITE_HOST_RE}/(.*)
-      - traefik.http.middlewares.preventivi-nowww.redirectregex.replacement=https://${SITE_HOST}/$${1}
-      - traefik.http.middlewares.preventivi-nowww.redirectregex.permanent=true
+      # Il dominio nudo manda a www, così l'indirizzo buono è uno solo.
+      - traefik.http.routers.preventivi-apex.rule=Host(`${SITE_HOST}`)
+      - traefik.http.routers.preventivi-apex.entrypoints=https
+      - traefik.http.routers.preventivi-apex.tls=true
+      - traefik.http.routers.preventivi-apex.tls.certresolver=letsencrypt
+      - traefik.http.routers.preventivi-apex.middlewares=preventivi-www
+      - traefik.http.routers.preventivi-apex.service=preventivi
+      - traefik.http.middlewares.preventivi-www.redirectregex.regex=^https://${SITE_HOST_RE}/(.*)
+      - traefik.http.middlewares.preventivi-www.redirectregex.replacement=https://www.${SITE_HOST}/$${1}
+      - traefik.http.middlewares.preventivi-www.redirectregex.permanent=true
       # Chi arriva su http viene spostato su https, come gli altri siti del server.
       - traefik.http.routers.preventivi-http.rule=Host(`${SITE_HOST}`) || Host(`www.${SITE_HOST}`)
       - traefik.http.routers.preventivi-http.entrypoints=http
@@ -64,7 +65,8 @@ services:
         aliases: [preventivi-db]
     ports:
       # Solo dal server stesso: serve alla build e ai travasi di dati.
-      - "127.0.0.1:5434:5432"
+      # Sull'host 5436: la 5434 è già di prenotaesame.
+      - "127.0.0.1:5436:5432"
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
