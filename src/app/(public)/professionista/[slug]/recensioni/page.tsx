@@ -406,7 +406,7 @@ export default async function RecensioniAgenzia({ params, searchParams }: { para
 
           <p className="t-meta mt-6">
             <Link href="/recensioni/" className="font-semibold text-action hover:underline">
-              Sfoglia le recensioni di tutte i professionisti →
+              Sfoglia le recensioni di tutti i professionisti →
             </Link>
           </p>
         </>

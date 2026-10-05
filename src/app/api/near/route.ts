@@ -1,4 +1,4 @@
-// Capoluogo con pagina città pubblicata più vicino a lat/lng + le suoi professionisti.
+// Capoluogo con pagina città pubblicata più vicino a lat/lng + i suoi professionisti.
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { haversineKm } from "@/modules/directory/geo";

@@ -1,7 +1,7 @@
 "use client";
 
 // "Vicino a te" (Tabbble): con il permesso del browser trova il capoluogo con
-// pagina pubblicata più vicino e mostra le suoi professionisti. Nessuna posizione
+// pagina pubblicata più vicino e mostra i suoi professionisti. Nessuna posizione
 // viene salvata: la richiesta parte solo al click.
 
 import Link from "next/link";
@@ -41,7 +41,7 @@ export function NearYou() {
       <div>
         <p className="t-body mb-4 text-ink-2">
           Il capoluogo più vicino con schede pubblicate è <strong className="text-ink">{res.city.name}</strong> ({res.distKm} km).{" "}
-          <Link href={res.path} className="font-bold text-action">Tutte i professionisti a {res.city.name} →</Link>
+          <Link href={res.path} className="font-bold text-action">Tutti i professionisti a {res.city.name} →</Link>
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {res.items.map((a) => <AgencyCard key={a.id} agency={a} />)}

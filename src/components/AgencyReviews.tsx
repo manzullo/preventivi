@@ -229,7 +229,7 @@ export async function AgencyReviews({
       </div>
       <p className="t-meta mt-4">
         <Link href="/recensioni/" className="font-semibold text-action hover:underline">
-          Sfoglia le recensioni di tutte i professionisti →
+          Sfoglia le recensioni di tutti i professionisti →
         </Link>
       </p>
     </section>

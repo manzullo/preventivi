@@ -42,13 +42,13 @@ export default function MethodologyPage() {
         <p>
           Quello che il pagamento non fa: non aggiunge un decimo di punteggio, né a chi paga né a
           scapito degli altri. Sotto la corsia in evidenza l&apos;elenco è quello di sempre, ordinato per
-          recensioni, e le stessi professionisti restano dove il loro punteggio le mette.
+          recensioni, e gli stessi professionisti restano dove il loro punteggio le mette.
         </p>
 
         <h2>La formula</h2>
         <p>
           Usiamo una media bayesiana: la media del professionista pesa in proporzione al numero di
-          recensioni, il resto lo copre la media di tutte i professionisti. Poche recensioni alte non
+          recensioni, il resto lo copre la media di tutti i professionisti. Poche recensioni alte non
           bastano per superare chi ne ha molte.
         </p>
         <p>

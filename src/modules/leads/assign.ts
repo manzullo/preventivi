@@ -92,7 +92,7 @@ export async function setAssignmentStatus(assignmentId: string, status: string, 
 }
 
 /**
- * Smistamento in un click: propone le prime professionisti suggeriti fino a
+ * Smistamento in un click: propone i primi professionisti suggeriti fino a
  * riempire i posti attivi (max 3) e invia subito l'email a ciascuna.
  */
 export async function autoAssign(leadId: string): Promise<{ ok: boolean; message: string }> {

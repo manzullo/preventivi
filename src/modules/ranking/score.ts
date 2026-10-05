@@ -75,7 +75,7 @@ export async function globalMean(): Promise<number> {
 }
 
 /**
- * Ricalcola score, rating e reviewCount di tutte i professionisti.
+ * Ricalcola score, rating e reviewCount di tutti i professionisti.
  * Il punteggio nasce solo dalle recensioni: nessuna leva commerciale lo tocca.
  * Chi paga entra nella corsia in evidenza, che è un'altra cosa e si vede.
  */
