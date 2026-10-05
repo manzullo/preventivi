@@ -25,8 +25,9 @@ export const metadata: Metadata = {
     "Professionisti e aziende vicino a te classificati per recensioni, con le schede in evidenza segnalate. Contatti diretti, preventivi gratis.",
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "16x16 32x32 48x48" },
+      { url: "/favicon-32.png", type: "image/png", sizes: "32x32" },
       { url: "/icon.png", type: "image/png", sizes: "192x192" },
-      { url: "/logo-icona.svg", type: "image/svg+xml" },
     ],
     apple: "/apple-icon.png",
   },
