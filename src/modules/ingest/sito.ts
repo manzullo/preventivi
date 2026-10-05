@@ -66,6 +66,9 @@ export function jsonLdObjects(html: string): Ld[] {
 
 const isBusiness = (o: Ld) => [o["@type"]].flat().some((t) => typeof t === "string" && BUSINESS.test(t));
 
+// Alcune directory (PagineGialle) mettono HTML nella descrizione JSON-LD.
+const senzaHtml = (t?: string) => t?.replace(/<br\s*\/?>|<\/p>/gi, "\n").replace(/<[^>]+>/g, "").replace(/&nbsp;/g, " ").replace(/\n{3,}/g, "\n\n").trim() || undefined;
+
 const contatto = (o: Ld, k: string) => [o.contactPoint].flat().map((c) => (c && typeof c === "object" ? str((c as Ld)[k]) : undefined)).find(Boolean);
 
 /**
@@ -138,7 +141,7 @@ export function mapLdBusiness(o: Ld, ctx: { source: string; url: string; service
     cityName: str(addr.addressLocality) ?? ctx.citySlug,
     lat: Number.isFinite(lat) ? lat : undefined,
     lng: Number.isFinite(lng) ? lng : undefined,
-    description: str(o.description),
+    description: senzaHtml(str(o.description)),
     serviceSlugs: [ctx.serviceSlug],
     reviews,
   };
