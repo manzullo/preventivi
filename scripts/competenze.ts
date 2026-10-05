@@ -2,7 +2,7 @@
 // prendono le voci del vocabolario delle sue categorie (data/competenze.json,
 // vedi scripts/vocabolario-competenze.ts) e si tiene una voce se tutte le sue
 // parole compaiono nella stessa frase di nome, descrizione o servizi della
-// fonte. "Riparazione caldaia" entra con "riparazioni di caldaie e
+// fonte, più la home del suo sito se scripts/enrich-sites.ts l'ha letta. "Riparazione caldaia" entra con "riparazioni di caldaie e
 // scaldabagni", non con "riparazioni" in una frase e "caldaia" in un'altra.
 // Il risultato va in Agency.skills e alimenta /competenze/{voce}/{città}/.
 //
@@ -11,6 +11,7 @@
 import fs from "node:fs";
 for (const line of (fs.existsSync(".env") ? fs.readFileSync(".env", "utf8") : "").split("\n")) { const m = line.match(/^([A-Z0-9_]+)=(.*)$/); if (m && !process.env[m[1]]) process.env[m[1]] = m[2].replace(/^"|"$/g, ""); }
 import { db } from "../src/lib/db";
+import { sitiLetti } from "./lib/siti";
 
 const DRY = process.argv.includes("--dry");
 const VOCABOLARIO: Record<string, string[]> = JSON.parse(fs.readFileSync("data/competenze.json", "utf8"));
@@ -49,13 +50,15 @@ async function main() {
   togliDoppioniCategoria(await db.service.findMany({ select: { slug: true, name: true, queries: true } }));
   const schede = await db.agency.findMany({
     where: { optedOutAt: null },
-    select: { id: true, name: true, description: true, sourceDescription: true, skills: true, services: { select: { service: { select: { slug: true } } } } },
+    select: { id: true, name: true, domain: true, description: true, sourceDescription: true, skills: true, services: { select: { service: { select: { slug: true } } } } },
   });
+  const siti = sitiLetti();
   const conta = new Map<string, number>();
   let conCompetenze = 0;
   let cambiate = 0;
   for (const a of schede) {
-    const testo = [a.name, a.description, a.sourceDescription].filter(Boolean).join("\n");
+    const sito = a.domain ? siti.get(a.domain) : undefined;
+    const testo = [a.name, a.description, a.sourceDescription, sito?.title, sito?.description, sito?.text].filter(Boolean).join("\n");
     const frasi = testo.split(/[.!?;:\n•·|]+/).map(parole).filter((f) => f.length);
     const trovate = new Set<string>();
     for (const { service } of a.services) for (const v of voci.get(service.slug) ?? []) if (presente(frasi, v)) trovate.add(v.nome);
