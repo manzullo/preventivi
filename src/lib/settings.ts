@@ -15,7 +15,7 @@ export const smtpSchema = z.object({
   // Indirizzo che spedisce: sta su un dominio già configurato per la posta
   // (SPF e DKIM sono i suoi), non sul dominio del sito.
   from: z.string().default(""),
-  // Nome visibile nella casella di chi riceve: "Preventivi".
+  // Nome visibile nella casella di chi riceve: "Mister Wolf".
   fromName: z.string().default(""),
   // Dove finiscono le risposte, se diverso dal mittente.
   replyTo: z.string().default(""),

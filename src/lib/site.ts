@@ -1,7 +1,7 @@
 // Costanti di sito e costruzione dei path. Ogni URL pubblico passa da qui,
 // così una rinomina si fa in un punto solo (e genera un Redirect).
 
-export const SITE_NAME = "Preventivi";
+export const SITE_NAME = "Mister Wolf";
 
 /**
  * Abbassa la prima lettera per infilare un nome dentro una frase: "Professionisti SEO"

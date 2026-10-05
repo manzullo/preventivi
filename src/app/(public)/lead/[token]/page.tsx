@@ -37,7 +37,7 @@ export default async function LeadResponsePage({ params }: { params: Promise<{ t
     <div className="mx-auto max-w-2xl px-5 py-14">
       <Kicker className="mb-2">Per {a.agency.name}</Kicker>
       <h1 className="t-h1">Richiesta: {[l.service?.plural, l.city?.name].filter(Boolean).join(" a ") || "progetto"}</h1>
-      <p className="t-lead mt-3">Un cliente ha descritto il lavoro su Preventivi e vi abbiamo selezionati tra i professionisti con le recensioni migliori. {PROMISE}</p>
+      <p className="t-lead mt-3">Un cliente ha descritto il lavoro su Mister Wolf e vi abbiamo selezionati tra i professionisti con le recensioni migliori. {PROMISE}</p>
 
       <section className="mt-8 rounded-card border border-line bg-canvas p-5">
         <p className="t-kicker mb-3">Il progetto</p>

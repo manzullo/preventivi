@@ -11,7 +11,7 @@ export async function sendEmail(to: string[], subject: string, text: string): Pr
     auth: s.user ? { user: s.user, pass: s.pass } : undefined,
   });
   // Il mittente resta l'indirizzo del dominio che ha la posta configurata; il
-  // nome visibile è quello del sito, così chi riceve legge "Preventivi".
+  // nome visibile è quello del sito, così chi riceve legge "Mister Wolf".
   const from = s.fromName ? `"${s.fromName.replace(/"/g, "")}" <${s.from}>` : s.from;
   await transport.sendMail({ from, to: to.join(", "), subject, text, ...(s.replyTo ? { replyTo: s.replyTo } : {}) });
 }

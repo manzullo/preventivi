@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Deploy di Preventivi sulla VPS IONOS.
+# Deploy di Mister Wolf sulla VPS IONOS.
 #   ./scripts/deploy.sh
 # Cosa fa: copia il codice, applica le migrazioni con un contenitore usa e
 # getta, ricostruisce l'immagine e riavvia. Il database resta dov'è.

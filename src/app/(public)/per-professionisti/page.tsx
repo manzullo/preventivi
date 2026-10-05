@@ -13,7 +13,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = pageMeta({
   title: "Per i professionisti: richieste dirette, nessuna commissione",
-  description: "Come funziona Preventivi per professionisti e aziende: iscrizione gratuita, ordine basato solo sulle recensioni, richieste dei clienti inoltrate in chiaro.",
+  description: "Come funziona Mister Wolf per professionisti e aziende: iscrizione gratuita, ordine basato solo sulle recensioni, richieste dei clienti inoltrate in chiaro.",
   path: "/per-agenzie/",
 });
 

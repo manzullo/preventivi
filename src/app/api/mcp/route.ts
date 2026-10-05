@@ -66,7 +66,7 @@ export async function gestisci(req: Request, chiaveDaIndirizzo?: string) {
         capabilities: { tools: {} },
         serverInfo: { name: "preventivi-analisi", version: "1.0.0" },
         instructions:
-          "Dati di Preventivi: traffico, provenienze, pagine di ingresso, schede più viste e richieste di preventivo. I numeri escludono le visite di chi gestisce il sito. Nomi, email e telefoni non sono disponibili.",
+          "Dati di Mister Wolf: traffico, provenienze, pagine di ingresso, schede più viste e richieste di preventivo. I numeri escludono le visite di chi gestisce il sito. Nomi, email e telefoni non sono disponibili.",
       });
 
     case "notifications/initialized":
@@ -106,7 +106,7 @@ export async function POST(req: Request) {
 /** Con il browser si vede solo cos'è: i dati passano dal POST con la chiave. */
 export async function GET() {
   return NextResponse.json({
-    nome: "Connettore analisi di Preventivi",
+    nome: "Connettore analisi di Mister Wolf",
     protocollo: `MCP ${PROTOCOLLO}`,
     uso: "Aggiungilo come connettore in Claude o ChatGPT con questo indirizzo e una chiave creata in /admin/connettore/.",
     interrogazioni: STRUMENTI.map((s) => ({ nome: s.nome, descrizione: s.descrizione })),

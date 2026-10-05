@@ -242,7 +242,7 @@ export function ListingView(p: Props) {
             ))}
           </div>
           <p className="t-meta mt-4">
-            Redazione Preventivi · aggiornata il {(p.updatedAt ?? new Date()).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" })} · <Link href={paths.methodology()} className="font-semibold text-action">metodologia</Link>
+            Redazione Mister Wolf · aggiornata il {(p.updatedAt ?? new Date()).toLocaleDateString("it-IT", { day: "numeric", month: "long", year: "numeric" })} · <Link href={paths.methodology()} className="font-semibold text-action">metodologia</Link>
           </p>
         </div>
       )}

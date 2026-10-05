@@ -90,7 +90,7 @@ export default async function AgencyPage({ params, searchParams }: { params: Par
   const faq = agencyFaq(a, { auto: site.faqAuto });
   const waHref =
     site.whatsappCta && a.whatsapp
-      ? `https://wa.me/${a.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`Ciao ${a.name}, vi ho trovato su Preventivi e vorrei un preventivo.`)}`
+      ? `https://wa.me/${a.whatsapp.replace(/\D/g, "")}?text=${encodeURIComponent(`Ciao ${a.name}, vi ho trovato su Mister Wolf e vorrei un preventivo.`)}`
       : null;
 
   return (

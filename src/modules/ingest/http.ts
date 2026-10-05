@@ -3,7 +3,7 @@
 // l'una e l'altra, nuovi tentativi solo sugli errori passeggeri. Ogni scraper
 // passa da qui, così le regole sono le stesse per tutte le fonti.
 
-const UA = process.env.SCRAPER_UA ?? "PreventiviBot/0.1 (+https://github.com/manzullo/preventivi)";
+const UA = process.env.SCRAPER_UA ?? "MisterWolfBot/0.1 (+https://github.com/manzullo/preventivi)";
 
 type Rules = { disallow: string[]; allow: string[]; delayMs?: number };
 const robotsCache = new Map<string, Rules>();

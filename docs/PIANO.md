@@ -1,9 +1,10 @@
-# Preventivi — Piano di progetto
+# Mister Wolf — Piano di progetto
 
-> "Preventivi" è il nome provvisorio (è il nome del repo). Il nome vero si
-> sceglie a parte: si cambia `SITE_NAME` in `src/lib/site.ts`, il logo in
-> `src/components/SiteHeader.tsx` e le variabili `NEXT_PUBLIC_SITE_URL`,
-> `SITE_HOST`, `SITE_HOST_RE`.
+> Nome deciso il 2026-10-05: **Mister Wolf**, dominio **misterwolf.org**
+> (sito internazionale, in più lingue). Il repo resta `preventivi`. Il nome
+> sta in `SITE_NAME` (`src/lib/site.ts`) e nel logo
+> (`src/components/SiteHeader.tsx`); il dominio nelle variabili
+> `NEXT_PUBLIC_SITE_URL`, `SITE_HOST`, `SITE_HOST_RE`.
 
 Directory italiana di professionisti e aziende per servizi locali (casa,
 eventi, benessere, lezioni, professioni, auto, animali), con richiesta di

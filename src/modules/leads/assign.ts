@@ -38,7 +38,7 @@ function leadEmailText(l: { id: string; company: string | null; budget: string |
   return [
     `Buongiorno ${agencyName},`,
     "",
-    `una richiesta su Preventivi corrisponde ai vostri servizi:`,
+    `una richiesta su Mister Wolf corrisponde ai vostri servizi:`,
     `- Richiesta: ${l.service?.plural ?? "servizio n.d."} a ${l.city?.name ?? "città n.d."}`,
     `- Budget: ${l.budget ?? "-"} · Tempi: ${l.timing ?? "-"}`,
     l.company ? `- Azienda: ${l.company}` : null,

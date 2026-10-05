@@ -20,7 +20,7 @@ export function LogoIcona({ className = "" }: { className?: string }) {
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
     <span className={`font-extrabold tracking-[-0.033em] ${className}`}>
-      Preven<span className="text-action">tivi</span>
+      Mister<span className="text-action">Wolf</span>
     </span>
   );
 }
@@ -90,7 +90,7 @@ export async function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-canvas/90 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-5 md:gap-6">
-        <Link href="/" aria-label="Preventivi, home" className="shrink-0">
+        <Link href="/" aria-label="Mister Wolf, home" className="shrink-0">
           <Marchio />
         </Link>
 
@@ -103,7 +103,7 @@ export async function SiteHeader() {
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
           <Button href={paths.quote()} arrow className="min-h-10 whitespace-nowrap px-2.5 py-2.5 text-[13px] sm:px-5 sm:text-sm">
             {/* Sui telefoni il testo lungo spinge il bottone fuori dallo schermo. */}
-            <span className="sm:hidden">Preventivi</span>
+            <span className="sm:hidden">Mister Wolf</span>
             <span className="hidden sm:inline">Chiedi un preventivo</span>
           </Button>
           <MenuMobile

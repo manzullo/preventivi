@@ -22,7 +22,7 @@ export async function POST(req: Request, { params }: Params) {
 
 export async function GET() {
   return NextResponse.json({
-    nome: "Connettore analisi di Preventivi",
+    nome: "Connettore analisi di Mister Wolf",
     stato: "attivo: usa questo stesso indirizzo come connettore in Claude o ChatGPT",
     interrogazioni: STRUMENTI.map((s) => s.nome),
   });

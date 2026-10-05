@@ -61,7 +61,7 @@ export default async function SettingsPage({ searchParams }: { searchParams: Sea
           <F label="Utente"><input name="user" className={IN} defaultValue={smtp.user} /></F>
           <F label="Password"><input name="pass" type="password" className={IN} placeholder={smtp.pass ? "•••••• (salvata)" : ""} /></F>
           <F label="Mittente (casella che spedisce)"><input name="from" className={IN} defaultValue={smtp.from} placeholder="noreply@alessandromanzullo.it" /></F>
-          <F label="Nome visibile"><input name="fromName" className={IN} defaultValue={smtp.fromName} placeholder="Preventivi" /></F>
+          <F label="Nome visibile"><input name="fromName" className={IN} defaultValue={smtp.fromName} placeholder="Mister Wolf" /></F>
           <F label="Risposte a"><input name="replyTo" className={IN} defaultValue={smtp.replyTo} placeholder="manzullo@gmail.com" /></F>
           <div className="sm:col-span-3"><Button type="submit" className="min-h-10 px-5 py-2 text-sm">Salva SMTP</Button></div>
         </form>

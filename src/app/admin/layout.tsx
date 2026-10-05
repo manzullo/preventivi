@@ -5,7 +5,7 @@ import "@/app/globals.css";
 const onest = Onest({ subsets: ["latin"], weight: ["400", "500", "600", "700", "800"], variable: "--font-onest", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "Admin", template: "%s | Admin Preventivi" },
+  title: { default: "Admin", template: "%s | Admin Mister Wolf" },
   robots: { index: false, follow: false },
 };
 

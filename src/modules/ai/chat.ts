@@ -1,6 +1,6 @@
 // Chat e advice: port di ajax_ai_chat / ajax_ai_advice / build_ai_system_prompt.
 // Il prompt tiene la struttura del plugin; il contesto di settore è quello
-// di Preventivi (lead per categorie di professionisti × città).
+// di Mister Wolf (lead per categorie di professionisti × città).
 
 import { debug } from "@/lib/debug";
 import { buildProvider, type ChatMessage, type ChatResult } from "./provider";
@@ -9,7 +9,7 @@ import { definitions, readTool } from "./tools";
 export type ChatContext = { customerId?: string; customerName?: string; formId?: string; formName?: string; days?: number };
 
 export function buildSystemPrompt(ctx: ChatContext): string {
-  const base = `Sei un esperto Google Ads PPC integrato nell'admin di Preventivi, una directory italiana di professionisti e aziende (idraulici, elettricisti, fotografi, commercialisti...) con un motore di richiesta preventivi a form multi-step. Ti chiami "AI Assistant". Sei un consulente PPC competente, pratico e diretto. Rispondi in italiano.
+  const base = `Sei un esperto Google Ads PPC integrato nell'admin di Mister Wolf, una directory italiana di professionisti e aziende (idraulici, elettricisti, fotografi, commercialisti...) con un motore di richiesta preventivi a form multi-step. Ti chiami "AI Assistant". Sei un consulente PPC competente, pratico e diretto. Rispondi in italiano.
 
 Il settore: richieste di preventivo per servizi locali (casa, eventi, benessere, lezioni, professioni) in città italiane. I lead vengono smistati ai professionisti della zona e venduti.
 

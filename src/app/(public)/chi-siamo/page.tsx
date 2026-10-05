@@ -11,7 +11,7 @@ export const revalidate = 3600;
 
 export const metadata: Metadata = pageMeta({
   title: "Chi siamo",
-  description: "Chi c'è dietro Preventivi, come guadagniamo, quali dati usiamo e come li verifichiamo.",
+  description: "Chi c'è dietro Mister Wolf, come guadagniamo, quali dati usiamo e come li verifichiamo.",
   path: "/chi-siamo/",
 });
 
