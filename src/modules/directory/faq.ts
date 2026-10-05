@@ -56,13 +56,13 @@ export function agencyFaq(a: AgencyForFaq, opts: { auto: boolean }): FaqItem[] {
       out.push({ q: `Dove si trova ${a.name}?`, a: `La sede di ${a.name} è a ${a.city.name}. Molti professionisti lavorano anche da remoto: chiedi nel preventivo se seguono clienti fuori città.` });
     }
     if (a.minBudget) {
-      out.push({ q: `Qual è il budget minimo per lavorare con ${a.name}?`, a: `Il budget minimo dichiarato è di ${fmt(a.minBudget)} €. Il preventivo esatto dipende dal progetto: lo chiedi gratis dalla scheda.` });
+      out.push({ q: `Quanto costa un lavoro con ${a.name}?`, a: `${a.name} dichiara lavori a partire da ${fmt(a.minBudget)} €. Il prezzo esatto dipende dal lavoro: chiedi un preventivo gratis dalla scheda.` });
     }
     if (a.teamSize) {
-      out.push({ q: `Quanto è grande il team di ${a.name}?`, a: `${a.name} dichiara un team di ${a.teamSize} persone.` });
+      out.push({ q: `Quante persone lavorano con ${a.name}?`, a: `${a.name} dichiara una squadra di ${a.teamSize} persone.` });
     }
     if (a.foundedYear) {
-      out.push({ q: `Da quanto tempo opera ${a.name}?`, a: `${a.name} è attiva dal ${a.foundedYear}.` });
+      out.push({ q: `Da quanto tempo lavora ${a.name}?`, a: `${a.name} è in attività dal ${a.foundedYear}.` });
     }
     if (a.reviewCount > 0 && a.rating !== null) {
       out.push({ q: `Che recensioni ha ${a.name}?`, a: `${a.name} ha ${fmt(a.reviewCount)} recensioni pubbliche con una media di ${a.rating.toFixed(1)} su 5. Ogni recensione riporta la fonte.` });

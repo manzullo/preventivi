@@ -139,11 +139,11 @@ export function PannelloFiltri({ basePath, filtri, conteggi, totale, servizio, c
         })),
       },
       {
-        titolo: "Budget di partenza",
+        titolo: "Prezzi a partire da",
         voci: BUDGET_RANGES.map((b) => ({ chiave: `budget:${b.key}`, etichetta: b.label, quanti: numeri.conteggi?.budget[b.key] })),
       },
       {
-        titolo: "Dimensione del team",
+        titolo: "Persone in squadra",
         voci: TEAM_SIZES.map((t) => ({ chiave: `team:${t}`, etichetta: `${t} persone`, quanti: numeri.conteggi?.team[t] })),
       },
       {

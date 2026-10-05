@@ -12,7 +12,6 @@ export function AgencyCard({ agency: a, position }: { agency: AgencyCardConEvide
   const evidenza = a.evidenza ?? (a.priority ? "In evidenza" : null);
   const meta = [
     a.minBudget ? `da ${fmt(a.minBudget)} €` : null,
-    a.teamSize ? `${a.teamSize} persone` : null,
   ].filter(Boolean);
 
   return (

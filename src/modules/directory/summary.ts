@@ -29,19 +29,18 @@ export function factSummary(a: SummaryInput, opts: { short?: boolean } = {}): st
 
   if (opts.short) {
     // In elenco la frase completa si ripeterebbe uguale su decine di schede:
-    // meglio i tratti che distinguono davvero (competenze, anno, dimensione).
+    // meglio i tratti che distinguono davvero (competenze, anno).
     const tratti = [
       ...skills,
       a.foundedYear ? `dal ${a.foundedYear}` : null,
-      a.teamSize ? `${a.teamSize} persone` : null,
     ].filter(Boolean) as string[];
     return tratti.length ? tratti.slice(0, 4).join(" · ") : frasi[0];
   }
 
   const dati = [
-    a.foundedYear ? `attiva dal ${a.foundedYear}` : null,
-    a.teamSize ? `team di ${a.teamSize} persone` : null,
-    a.minBudget ? `progetti da ${fmt(a.minBudget)} € in su` : null,
+    a.foundedYear ? `in attività dal ${a.foundedYear}` : null,
+    a.teamSize ? `squadra di ${a.teamSize} persone` : null,
+    a.minBudget ? `lavori da ${fmt(a.minBudget)} € in su` : null,
   ].filter(Boolean) as string[];
   if (dati.length) frasi.push(`${list(dati.map((d, i) => (i === 0 ? d.charAt(0).toUpperCase() + d.slice(1) : d)))}.`);
 

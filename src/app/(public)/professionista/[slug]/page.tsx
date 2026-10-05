@@ -218,19 +218,19 @@ export default async function AgencyPage({ params, searchParams }: { params: Par
             )}
             {a.minBudget && (
               <div className="flex justify-between gap-3">
-                <dt>Budget minimo</dt>
+                <dt>Prezzi</dt>
                 <dd className="text-ink">da {fmt(a.minBudget)} €</dd>
               </div>
             )}
             {a.teamSize && (
               <div className="flex justify-between gap-3">
-                <dt>Team</dt>
+                <dt>Squadra</dt>
                 <dd className="text-ink">{a.teamSize} persone</dd>
               </div>
             )}
             {a.foundedYear && (
               <div className="flex justify-between gap-3">
-                <dt>Fondata</dt>
+                <dt>Attivo dal</dt>
                 <dd className="text-ink">{a.foundedYear}</dd>
               </div>
             )}

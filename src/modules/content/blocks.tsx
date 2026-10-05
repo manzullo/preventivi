@@ -162,7 +162,7 @@ async function Numeri({ attrs }: { attrs: Record<string, string> }) {
   const dati = [
     { k: "Professionisti in elenco", v: fmt(total) },
     { k: "Recensioni pubbliche", v: fmt(recensioni) },
-    { k: "Budget minimo mediano", v: budget.median ? `${fmt(budget.median)} €` : "—" },
+    { k: "Prezzi da (mediana)", v: budget.median ? `${fmt(budget.median)} €` : "—" },
   ];
   return (
     <section className="not-prose my-8 grid gap-3 sm:grid-cols-3">

@@ -52,7 +52,7 @@ type Props = {
   updatedAt?: Date;
 };
 
-const MID_AFTER = 6; // il box "non vuoi contattarle una per una?" dopo la 6ª card
+const MID_AFTER = 6; // il box "non vuoi chiamarli uno per uno?" dopo la 6ª card
 
 /** Numeri da mostrare: prima, ultima e una finestra intorno alla corrente.
  *  Lo zero segna il salto (…): con 57 pagine l'elenco completo esce dallo schermo. */
@@ -232,7 +232,7 @@ export function ListingView(p: Props) {
 
       {p.guide && p.guide.length > 0 && (
         <div className="mt-14">
-          <SectionHead kicker="In breve" title={`Guida per scegliere: ${p.listName.toLowerCase()}`} />
+          <SectionHead kicker="In breve" title={`Guida per scegliere: ${p.listName.charAt(0).toLowerCase()}${p.listName.slice(1)}`} />
           <div className="grid gap-6 md:grid-cols-2">
             {p.guide.map((g) => (
               <div key={g.title} className="rounded-card border border-line bg-canvas p-5">
