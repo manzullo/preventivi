@@ -1,0 +1,15 @@
+// Schema multi-file (Prisma 6): questa cartella viene letta per intero.
+// base.prisma      generator + datasource
+// directory.prisma agenzie, servizi, città, recensioni, pagine generate
+// leadforms.prisma form engine (port di PartySpot Forms), lead, tracking
+// system.prisma    integrazioni (Google Ads, notifiche), impostazioni, redirect
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
