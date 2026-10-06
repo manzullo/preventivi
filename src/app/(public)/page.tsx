@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { AgencyCard } from "@/components/AgencyCard";
 import { HeroSearch } from "@/components/HeroSearch";
+import { QuoteButton } from "@/components/QuoteCta";
 import { NearYou } from "@/components/NearYou";
 import { Button, Chip, Kicker, SectionHead } from "@/design/ui";
+import { HOW_IT_WORKS, PRO_CTA_LABEL, PRO_CTA_QUESTION } from "@/lib/cta";
 import { db } from "@/lib/db";
 import { excerpt } from "@/lib/markdown";
 import { fmt, paths, plural } from "@/lib/site";
@@ -98,12 +100,6 @@ export default async function Home() {
   const gruppi = [...services.reduce((m, s) => m.set(s.group ?? "Altro", [...(m.get(s.group ?? "Altro") ?? []), s]), new Map<string, typeof services>())];
   const pairs = pairPages.map((p) => `${p.service?.slug}|${p.city?.slug}`);
 
-  const steps = [
-    ["Descrivi il lavoro", "Cosa ti serve, dove e quando: due minuti, nessun account."],
-    ["Ricevi i preventivi", "Giriamo la richiesta ai professionisti della zona scelti per recensioni, non a chi paga."],
-    ["Scegli con calma", "Confronti prezzi e recensioni e parli direttamente con chi ti convince."],
-  ];
-
   return (
     <>
       <section className="mx-auto max-w-6xl px-5 pt-16 pb-12 text-center">
@@ -116,13 +112,7 @@ export default async function Home() {
           nasce dalle recensioni con la fonte; i preventivi sono gratis e senza impegno.
         </p>
         <HeroSearch services={searchServices} cities={searchCities} pairs={pairs} />
-        <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-          <Button href={paths.quote()} arrow>
-            Chiedi un preventivo
-          </Button>
-          <span className="t-meta">e ricevi fino a tre proposte</span>
-        </div>
-        <p className="t-meta mt-3">
+        <p className="t-meta mt-4">
           Hai già un nome in mente?{" "}
           <Link href="/cerca/" className="font-semibold text-action hover:underline">
             Cerca il professionista per nome
@@ -251,7 +241,7 @@ export default async function Home() {
         <div className="rounded-panel bg-surface p-8 sm:p-12">
           <SectionHead kicker="Come funziona" title="Tre passi, zero commissioni" />
           <ol className="grid gap-6 sm:grid-cols-3">
-            {steps.map(([t, d], i) => (
+            {HOW_IT_WORKS.map(([t, d], i) => (
               <li key={t}>
                 <p className="t-kicker mb-2">0{i + 1}</p>
                 <p className="t-title">{t}</p>
@@ -259,9 +249,30 @@ export default async function Home() {
               </li>
             ))}
           </ol>
-          <Button href={paths.quote()} arrow className="mt-8">
-            Chiedi un preventivo
-          </Button>
+          <QuoteButton href={paths.quote()} position="end" className="mt-8" />
+        </div>
+      </section>
+
+      {/* Il secondo pubblico, come nella home di Instapro: chi lavora deve
+          capire in una riga che entrare è gratis e che le richieste arrivano. */}
+      <section className="mx-auto max-w-6xl px-5 pb-16">
+        <div className="flex flex-col gap-6 rounded-panel border border-line p-8 sm:p-12 md:flex-row md:items-center md:justify-between">
+          <div className="max-w-2xl">
+            <Kicker className="mb-2">{PRO_CTA_QUESTION}</Kicker>
+            <h2 className="t-h2">Fai crescere la tua attività con Mister Wolf</h2>
+            <p className="t-body mt-2 text-ink-2">
+              Iscrizione gratuita. Ricevi richieste di lavoro nella tua zona e per i lavori che fai davvero, scegli tu a quali rispondere.
+              In classifica si sale solo con le recensioni.
+            </p>
+          </div>
+          <div className="flex shrink-0 flex-col items-start gap-2 md:items-center">
+            <Button href="/candidatura/" arrow>
+              {PRO_CTA_LABEL}
+            </Button>
+            <Link href="/per-professionisti/" className="t-meta font-bold text-action">
+              Come funziona per i professionisti →
+            </Link>
+          </div>
         </div>
       </section>
     </>

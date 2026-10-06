@@ -142,7 +142,7 @@ export default async function Page({ params, searchParams }: { params: Params; s
         conteggi={conteggi}
         servizioSlug={service.slug}
         cittaSlug={city.slug}
-        quoteHref={paths.quote({ servizio: service.slug, citta: city.slug })}
+        quoteHref={paths.quote({ servizio: service.slug, citta: city.slug, lavoro: alias?.label })}
         listName={alias ? `${alias.agencyLabel ?? service.plural} a ${city.name}` : `${service.plural} a ${city.name}`}
         nearby={nearby}
         serviceLabel={service.plural}

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MenuMobile } from "./MenuMobile";
 import { Button } from "@/design/ui";
 import { db } from "@/lib/db";
+import { CTA_LABEL, PRO_CTA_LABEL, PRO_CTA_QUESTION } from "@/lib/cta";
 import { paths } from "@/lib/site";
 
 // Il segno del marchio: un ago di bussola bianco su quadrato blu. È disegnato
@@ -75,8 +76,8 @@ export async function SiteHeader() {
     { href: paths.quote(), label: "Ricevi fino a 3 preventivi", hint: "descrivi il lavoro una volta sola" },
   ];
   const perAgenzie: Voce[] = [
-    { href: "/per-agenzie/", label: "Come funziona per i professionisti", hint: "richieste dirette, nessuna commissione" },
-    { href: "/candidatura/", label: "Aggiungi la tua attività", hint: "iscrizione gratuita" },
+    { href: "/per-professionisti/", label: "Come funziona per i professionisti", hint: "richieste dirette, nessuna commissione" },
+    { href: "/candidatura/", label: PRO_CTA_LABEL, hint: "aggiungi la tua attività e ricevi richieste" },
     { href: "/rivendica/", label: "Rivendica la tua scheda", hint: "se sei già in elenco" },
     { href: "/area/", label: "Area professionista", hint: "gestisci scheda, richieste e numeri" },
   ];
@@ -101,10 +102,16 @@ export async function SiteHeader() {
         </nav>
 
         <div className="flex shrink-0 items-center gap-1.5 sm:gap-2">
+          {/* Come Instapro: l'ingresso per chi lavora sta in testata, accanto a
+              quello per chi cerca, non sepolto in un menu. */}
+          <Link href="/candidatura/" className="mr-2 hidden text-right text-[13px] leading-tight text-ink-2 hover:text-action lg:block">
+            {PRO_CTA_QUESTION}
+            <span className="block font-bold text-ink">{PRO_CTA_LABEL}</span>
+          </Link>
           <Button href={paths.quote()} arrow className="min-h-10 whitespace-nowrap px-2.5 py-2.5 text-[13px] sm:px-5 sm:text-sm">
             {/* Sui telefoni il testo lungo spinge il bottone fuori dallo schermo. */}
             <span className="sm:hidden">Mister Wolf</span>
-            <span className="hidden sm:inline">Chiedi un preventivo</span>
+            <span className="hidden sm:inline">{CTA_LABEL}</span>
           </Button>
           <MenuMobile
             gruppi={[

@@ -182,7 +182,7 @@ export default async function CompetenzaCittaPage({ params, searchParams }: { pa
 
       <div className="mt-12">
         <QuoteBox
-          href={paths.quote({ citta: city.slug, ...(servizio ? { servizio: servizio.slug } : {}) })}
+          href={paths.quote({ citta: city.slug, ...(servizio ? { servizio: servizio.slug, lavoro: c.nome } : {}) })}
           position="end"
           context={`Ti serve ${c.nome.toLowerCase()} a ${city.name}?`}
         />

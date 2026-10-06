@@ -14,6 +14,11 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   // Immagine Docker snella: server.js + tracce, senza node_modules interi.
   output: "standalone",
+  // La pagina per chi lavora si chiamava /per-agenzie/ nel motore di
+  // guidaagenzie: i link vecchi restano buoni.
+  async redirects() {
+    return [{ source: "/per-agenzie/", destination: "/per-professionisti/", permanent: true }];
+  },
   ...(processiDiCompilazione ? { experimental: { cpus: processiDiCompilazione } } : {}),
 };
 

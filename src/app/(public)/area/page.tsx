@@ -52,7 +52,7 @@ export default async function AreaAccesso({ searchParams }: { searchParams: Prom
 
       <p className="t-meta mt-8">
         Non trovi la tua attività in elenco? <Link href="/candidatura/" className="text-action hover:underline">Candidala</Link>. Come funziona il resto è spiegato in{" "}
-        <Link href="/per-agenzie/" className="text-action hover:underline">questa pagina</Link>.
+        <Link href="/per-professionisti/" className="text-action hover:underline">questa pagina</Link>.
       </p>
     </div>
   );

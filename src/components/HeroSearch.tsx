@@ -6,6 +6,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { CTA_LABEL, CTA_MICRO } from "@/lib/cta";
 import { paths } from "@/lib/site";
 
 export type SearchItem = {
@@ -104,8 +105,14 @@ function Combo({ id, label, placeholder, items, value, onChange, q, setQ }: { id
   );
 }
 
-export function HeroSearch({ services, cities, pairs }: { services: SearchItem[]; cities: SearchItem[]; pairs: string[] }) {
+type Modo = "preventivo" | "cerca";
+
+export function HeroSearch({ services, cities, pairs, modoIniziale = "preventivo" }: { services: SearchItem[]; cities: SearchItem[]; pairs: string[]; modoIniziale?: Modo }) {
   const router = useRouter();
+  // Due ingressi nello stesso riquadro, come Instapro: chi vuole i preventivi
+  // va dritto al modulo con servizio e città già scritti, chi vuole guardare
+  // la lista va alla pagina della classifica.
+  const [modo, setModo] = useState<Modo>(modoIniziale);
   const [service, setService] = useState("");
   const [city, setCity] = useState("");
   const [sq, setSq] = useState("");
@@ -126,6 +133,15 @@ export function HeroSearch({ services, cities, pairs }: { services: SearchItem[]
     // l'elenco delle coppie valide.
     if (voceS?.href && c && voceS.base) return router.push(`${voceS.base}${c}/`);
     if (voceS?.href) return router.push(voceS.href);
+    if (modo === "preventivo") {
+      // Il comune senza pagina vale come il suo capoluogo, che è anche
+      // l'opzione del modulo. Un modo di dire ("Riparazione caldaia") è già
+      // il lavoro: il modulo salta anche quella domanda.
+      const citta = c.startsWith("comune:") ? voceC?.href?.split("/").filter(Boolean).pop() : c;
+      const servizio = voceS?.href ? undefined : sv;
+      const lavoro = voceS?.pair ? voceS.label : undefined;
+      return router.push(paths.quote({ servizio, citta, lavoro }));
+    }
     const destinazioneCitta = voceC?.href;
     // Un modo di dire, invece, ha la pagina città solo dove ce l'ha il servizio.
     if (sv && c && pairSet.has(`${sv}|${c}`)) {
@@ -138,20 +154,42 @@ export function HeroSearch({ services, cities, pairs }: { services: SearchItem[]
     document.getElementById("hero-servizio")?.focus();
   };
 
+  const preventivo = modo === "preventivo";
   return (
+    <div className="mx-auto mt-8 max-w-3xl">
+    <div role="tablist" aria-label="Cosa vuoi fare" className="mb-3 inline-flex rounded-pill border border-line bg-surface p-1 text-[13px] font-bold sm:text-sm">
+      {([["preventivo", "Ricevi preventivi"], ["cerca", "Cerca professionisti"]] as [Modo, string][]).map(([m, l]) => (
+        <button
+          key={m}
+          type="button"
+          role="tab"
+          aria-selected={modo === m}
+          onClick={() => setModo(m)}
+          className={`whitespace-nowrap rounded-pill px-4 py-1.5 transition-colors ${modo === m ? "bg-canvas text-ink shadow-soft" : "text-ink-2 hover:text-ink"}`}
+        >
+          {l}
+        </button>
+      ))}
+    </div>
     <form
       onSubmit={(e) => { e.preventDefault(); go(); }}
-      className="mx-auto mt-8 flex max-w-3xl flex-col items-stretch rounded-card border border-line bg-canvas p-2 text-left shadow-card sm:flex-row sm:items-center sm:rounded-pill"
+      className="flex flex-col items-stretch rounded-card border border-line bg-canvas p-2 text-left shadow-card sm:flex-row sm:items-center sm:rounded-pill"
     >
-      <Combo id="hero-servizio" label="Cosa cerchi" placeholder="es. Idraulico, fotografo" items={services} value={service} onChange={setService} q={sq} setQ={setSq} />
+      <Combo id="hero-servizio" label={preventivo ? "Di cosa hai bisogno?" : "Cosa cerchi"} placeholder={preventivo ? "es. Caldaia, imbianchino" : "es. Idraulico, fotografo"} items={services} value={service} onChange={setService} q={sq} setQ={setSq} />
       {/* Separatore fra i due campi: riga sui telefoni, dove stanno uno sotto
           l'altro, colonnina sugli schermi larghi, dove stanno affiancati. */}
       <div className="mx-3 my-1 h-px bg-line sm:mx-2 sm:my-0 sm:h-10 sm:w-px" />
-      <Combo id="hero-citta" label="Dove" placeholder="es. Roma, o il tuo comune" items={cities} value={city} onChange={setCity} q={cq} setQ={setCq} />
-      <button type="submit" className="m-1 inline-flex min-h-12 items-center justify-center gap-2 rounded-pill bg-action px-6 text-[15px] font-bold text-white hover:bg-action-hover">
-        Cerca
+      <Combo id="hero-citta" label={preventivo ? "Dove va fatto?" : "Dove"} placeholder="es. Roma, o il tuo comune" items={cities} value={city} onChange={setCity} q={cq} setQ={setCq} />
+      <button
+        type="submit"
+        {...(preventivo ? { "data-track": "cta_click", "data-cta": "hero" } : {})}
+        className="m-1 inline-flex min-h-12 items-center justify-center gap-2 whitespace-nowrap rounded-pill bg-action px-6 text-[15px] font-bold text-white hover:bg-action-hover"
+      >
+        {preventivo ? CTA_LABEL : "Cerca"}
         <span aria-hidden>→</span>
       </button>
     </form>
+    {preventivo && <p className="t-meta mt-3 text-center">{CTA_MICRO}</p>}
+    </div>
   );
 }

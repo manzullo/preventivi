@@ -5,7 +5,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Kicker } from "@/design/ui";
-import { CTA_MICRO, PROMISE } from "@/lib/cta";
+import { CTA_MICRO, HOW_IT_WORKS, PROMISE } from "@/lib/cta";
 import { db } from "@/lib/db";
 import { paths } from "@/lib/site";
 import { pagineEsistenti } from "@/modules/directory/pages";
@@ -51,6 +51,10 @@ export default async function QuotePage({ searchParams }: { searchParams: Search
   if (service) prefilled.servizio = service.slug;
   if (city) prefilled.citta = city.slug;
   if (agency) prefilled.professionista = agency.slug;
+  // Il lavoro preciso arriva dalle pagine "Riparazione caldaia a Roma": il
+  // passo "che lavoro" si salta, come il servizio. Testo libero, solo accorciato.
+  const lavoro = first(sp.lavoro)?.trim().slice(0, 80);
+  if (lavoro && service) prefilled.lavoro = lavoro;
 
   return (
     <div className="mx-auto grid max-w-6xl gap-10 px-5 py-12 md:grid-cols-[1fr_360px]">
@@ -66,23 +70,23 @@ export default async function QuotePage({ searchParams }: { searchParams: Search
         {form ? <FormEngine form={form} prefilled={prefilled} /> : <p className="t-body">Modulo non disponibile.</p>}
       </div>
       <aside className="md:pt-2">
-        <Kicker className="mb-2">Cosa succede dopo</Kicker>
+        <Kicker className="mb-2">Come funziona</Kicker>
         <ol className="t-body space-y-3 text-ink-2">
-          <li>
-            <strong className="text-ink">1.</strong> Leggiamo la richiesta e scegliamo fino a tre professionisti in base alle recensioni, non a chi paga.
-          </li>
-          <li>
-            <strong className="text-ink">2.</strong> Ti scriviamo entro un giorno lavorativo con la selezione.
-          </li>
-          <li>
-            <strong className="text-ink">3.</strong> Parli direttamente con i professionisti. Nessuna commissione, nessun intermediario.
-          </li>
+          {HOW_IT_WORKS.map(([t, d], i) => (
+            <li key={t}>
+              <strong className="text-ink">
+                {i + 1}. {t}.
+              </strong>{" "}
+              {d}
+            </li>
+          ))}
         </ol>
         <p className="t-meta mt-4">Chi risponde: fino a 3 professionisti, scelte per recensioni. {PROMISE}</p>
         {(service || city || agency) && (
           <div className="mt-8 rounded-card border border-line bg-surface p-5">
             <p className="t-kicker mb-2">Richiesta per</p>
             {agency && <p className="t-title">{agency.name}</p>}
+            {prefilled.lavoro && <p className="t-title">{prefilled.lavoro}</p>}
             {(service || city) && (
               <p className="t-body text-ink-2">{[service?.plural, city?.name].filter(Boolean).join(" a ")}</p>
             )}

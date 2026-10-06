@@ -11,7 +11,7 @@ import {
   EMAIL_RE,
   PHONE_RE,
   contaCifre,
-  conditionMet,
+  stepVisible,
   type Answers,
   type Contact,
   type PublicForm,
@@ -51,8 +51,7 @@ function validateAgainst(form: PublicForm, answers: Answers, contact: Contact, p
   const fields: Record<string, string> = {};
   for (const s of form.steps) {
     const c: StepConfig = s.config;
-    if (!conditionMet(c.condition, answers)) continue;
-    if (c.skipIfPrefilled && prefilled[s.key]) continue;
+    if (!stepVisible(c, answers, prefilled, s.key)) continue;
     if (c.type === "contact") {
       for (const f of c.fields) {
         const v = (contact[f.key] ?? "").trim();
