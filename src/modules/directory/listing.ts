@@ -29,6 +29,7 @@ export const agencyCardSelect = {
   foundedYear: true,
   verified: true,
   claimed: true,
+  vatNumber: true,
   logoUrl: true,
   priority: true,
   city: { select: { slug: true, name: true } },

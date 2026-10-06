@@ -147,7 +147,9 @@ export async function submitForm(input: SubmitInput): Promise<SubmitResult> {
         agencyId: agency?.id,
         budget: str(answers.budget),
         timing: str(answers.tempi),
-        description: str(answers.descrizione, 4000),
+        // Il lavoro scelto ("Sturare WC") apre la descrizione: è la prima cosa
+        // che il professionista legge, nell'email e nella pagina della richiesta.
+        description: str([str(answers.lavoro, 120) && `Lavoro: ${str(answers.lavoro, 120)}`, str(answers.descrizione, 4000)].filter(Boolean).join("\n"), 4200),
         name: str(input.contact.nome),
         email: str(input.contact.email)?.toLowerCase(),
         phone: phone ? `${phonePrefix} ${phone}`.trim() : undefined,

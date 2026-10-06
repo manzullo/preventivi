@@ -6,6 +6,7 @@ import { randomBytes } from "node:crypto";
 import { db } from "@/lib/db";
 import { BASE_URL } from "@/lib/site";
 import { cityScopeIds, agencyCardSelect } from "@/modules/directory/listing";
+import { sendBuyerAccepted } from "@/modules/notify/buyer";
 import { sendEmail } from "@/modules/notify/email";
 
 export const MAX_ACTIVE = 3;
@@ -123,5 +124,6 @@ export async function respondToAssignment(token: string, answer: "accepted" | "d
   if (a.status === "accepted" || a.status === "declined") return { ok: true, message: a.status === "accepted" ? "Già accettata" : "Già rifiutata" };
   await setAssignmentStatus(a.id, answer);
   await db.leadAssignment.update({ where: { id: a.id }, data: { respondedAt: new Date() } });
+  if (answer === "accepted") await sendBuyerAccepted(a.id);
   return { ok: true, message: answer === "accepted" ? "Accettata" : "Rifiutata" };
 }

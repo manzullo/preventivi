@@ -90,9 +90,19 @@ Dopo il deploy serve `npm run form:sync` sul server per aggiungere il passo
 - I prezzi li decide Ale; prima di attivare pagamenti online va scelto un
   sistema senza costi fissi.
 
-## Prossimi passi che non sono in questa PR
+## Seconda tornata (PR successiva)
 
-- Blocco "Quanto costa un {mestiere} a {città}?" con fasce di prezzo nelle
-  pagine categoria (servono i dati dei prezzi per servizio).
-- Etichetta "Partita IVA verificata" sulle schede che ce l'hanno.
-- Mostrare al cliente quanti professionisti hanno già risposto.
+- Pagina "La tua richiesta" per il cliente (`/richiesta/{id}/?k=firma`): a
+  quanti professionisti è arrivata, chi ha accettato, profilo, voto e
+  telefono per confrontarli. Il link è in `/grazie/` e nell'email di conferma.
+- Email al cliente quando un professionista accetta, con profilo e telefono.
+- Il lavoro scelto nel modulo apre la descrizione del lead: il professionista
+  lo legge per primo nell'email e nella sua pagina.
+- Etichetta "Con partita IVA" su schede e profili che la indicano.
+
+## Ancora da fare
+
+- Recensione chiesta al cliente a lavoro finito (serve un modulo recensioni
+  con moderazione).
+- Blocco "Quanto costa" più visibile delle FAQ, appena ci sono abbastanza
+  prezzi dichiarati o budget dalle richieste.

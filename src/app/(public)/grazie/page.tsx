@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button, Kicker } from "@/design/ui";
 import { PROMISE } from "@/lib/cta";
+import { firma } from "@/lib/crypto";
 import { db } from "@/lib/db";
 import { settings } from "@/lib/settings";
 import { paths } from "@/lib/site";
@@ -77,6 +78,14 @@ export default async function ThanksPage({ searchParams }: { searchParams: Searc
           <p className="t-meta mt-3">
             Richiesta: {recap.join(" · ")} · codice {lead!.id.slice(-8)}
           </p>
+        )}
+        {lead && (
+          <div className="mt-6">
+            <Button href={paths.request(lead.id, firma(lead.id))} arrow>
+              Segui la tua richiesta
+            </Button>
+            <p className="t-meta mt-2">Vedi a chi è arrivata e chi ha già risposto. Il link è anche nell&apos;email.</p>
+          </div>
         )}
         {lead?.email && mailSent && <p className="t-meta mt-1">Ti abbiamo scritto a {lead.email}: se non trovi l&apos;email, guarda nella posta indesiderata.</p>}
       </div>
