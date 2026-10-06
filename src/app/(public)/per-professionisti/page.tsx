@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { Button, Kicker } from "@/design/ui";
 import { db } from "@/lib/db";
-import { MAX_QUOTES } from "@/lib/cta";
+import { MAX_QUOTES, PRO_CTA_LABEL } from "@/lib/cta";
 import { fmt } from "@/lib/site";
 import { faqJsonLd } from "@/modules/directory/faq";
 import { JsonLd } from "@/components/JsonLd";
@@ -14,7 +14,7 @@ export const revalidate = 3600;
 export const metadata: Metadata = pageMeta({
   title: "Per i professionisti: richieste dirette, nessuna commissione",
   description: "Come funziona Mister Wolf per professionisti e aziende: iscrizione gratuita, ordine basato solo sulle recensioni, richieste dei clienti inoltrate in chiaro.",
-  path: "/per-agenzie/",
+  path: "/per-professionisti/",
 });
 
 const faq = [
@@ -36,7 +36,7 @@ export default async function PerAgenzie() {
 
   return (
     <div className="mx-auto max-w-4xl px-5 py-10">
-      <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Per i professionisti", href: "/per-agenzie/" }]} />
+      <Breadcrumbs items={[{ name: "Home", href: "/" }, { name: "Per i professionisti", href: "/per-professionisti/" }]} />
       <JsonLd data={faqJsonLd(faq)} />
 
       <Kicker className="mt-4">Per professionisti e aziende</Kicker>
@@ -76,7 +76,7 @@ export default async function PerAgenzie() {
       </ol>
 
       <div className="mt-10 flex flex-wrap gap-3">
-        <Button href="/candidatura/" arrow>Aggiungi la tua attività</Button>
+        <Button href="/candidatura/" arrow>{PRO_CTA_LABEL}</Button>
         <Link href="/rivendica/" className="rounded-pill border border-line px-5 py-2.5 text-sm font-semibold text-ink hover:border-ink/25 hover:text-action">
           Rivendica una scheda esistente
         </Link>

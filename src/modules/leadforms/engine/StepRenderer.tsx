@@ -5,7 +5,7 @@
 
 import { useMemo, useState } from "react";
 import { cn } from "@/design/ui";
-import type { Answers, Option, PublicStep } from "../schema";
+import { jobOptions, type Answers, type Option, type PublicStep } from "../schema";
 import { DateStep, RatingStep, SummaryStep } from "./ExtraSteps";
 
 type Value = string | string[] | number | undefined;
@@ -26,12 +26,16 @@ export function StepRenderer({ step, value, onChange, steps = [], answers = {} }
       return <SliderStep min={c.min} max={c.max} step={c.step} prefix={c.prefix} suffix={c.suffix} value={typeof value === "number" ? value : (c.defaultValue ?? c.min)} onChange={onChange} />;
     case "number":
       return <NumberStep min={c.min} max={c.max} step={c.step} prefix={c.prefix} suffix={c.suffix} value={typeof value === "number" ? value : c.defaultValue} onChange={onChange} />;
-    case "select":
+    case "select": {
+      // "Che lavoro": poche voci, si sceglie con un tocco come su Instapro.
+      const lavori = jobOptions(c, answers);
+      if (lavori) return <OptionGrid options={lavori} value={value} multiple={false} columns={2} onChange={onChange} />;
       return c.searchable ? (
         <SearchSelect options={c.options} value={value} placeholder={c.placeholder} onChange={onChange} />
       ) : (
         <PlainSelect options={c.options} value={value} placeholder={c.placeholder} onChange={onChange} />
       );
+    }
     case "textarea":
       return <TextareaStep value={typeof value === "string" ? value : ""} placeholder={c.placeholder} maxLength={c.maxLength} onChange={onChange} />;
     case "date":

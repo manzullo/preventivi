@@ -50,7 +50,7 @@ export default async function RivendicaIndice({ searchParams }: { searchParams: 
       <p className="t-meta mt-8">
         Schede già rivendicate: {fmt(rivendicate)}. Non trovi la tua attività?{" "}
         <Link href="/candidatura/" className="text-action hover:underline">Aggiungila da qui</Link>. Come funziona il resto lo spieghiamo in{" "}
-        <Link href="/per-agenzie/" className="text-action hover:underline">questa pagina</Link>.
+        <Link href="/per-professionisti/" className="text-action hover:underline">questa pagina</Link>.
       </p>
     </div>
   );

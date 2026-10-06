@@ -12,6 +12,9 @@ export const optionSchema = z.object({
   description: z.string().optional(),
   // Nomi alternativi che fanno trovare l'opzione (comuni minori → capoluogo).
   keywords: z.array(z.string()).optional(),
+  // Opzione legata alla risposta di un altro passo: i lavori di "idraulici"
+  // compaiono solo se il servizio scelto è "idraulici".
+  parent: z.string().optional(),
 });
 export type Option = z.infer<typeof optionSchema>;
 
@@ -49,7 +52,7 @@ export const stepConfigSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("video"), ...base, videoUrl: z.string().min(1), maxHeight: z.number().int().optional(), autoplay: z.boolean().default(true), options: z.array(optionSchema).default([]) }),
   z.object({ type: z.literal("slider"), ...base, min: z.number(), max: z.number(), step: z.number().default(1), prefix: z.string().optional(), suffix: z.string().optional(), defaultValue: z.number().optional() }),
   z.object({ type: z.literal("number"), ...base, min: z.number().default(0), max: z.number().default(100), step: z.number().default(1), defaultValue: z.number().default(1), prefix: z.string().optional(), suffix: z.string().optional() }),
-  z.object({ type: z.literal("select"), ...base, options: z.array(optionSchema).default([]), source: z.enum(["services", "cities"]).optional(), searchable: z.boolean().default(false), placeholder: z.string().optional() }),
+  z.object({ type: z.literal("select"), ...base, options: z.array(optionSchema).default([]), source: z.enum(["services", "cities", "jobs"]).optional(), searchable: z.boolean().default(false), placeholder: z.string().optional() }),
   z.object({ type: z.literal("textarea"), ...base, placeholder: z.string().optional(), minLength: z.number().int().default(0), maxLength: z.number().int().default(2000) }),
   z.object({ type: z.literal("contact"), ...base, fields: z.array(contactFieldSchema).min(1), consentText: z.string().default("Acconsento al trattamento dei dati per essere ricontattato."), submitLabel: z.string().optional() }),
   // Data (o solo fascia oraria) con slot in stile BookingWidget di Tabbble.
@@ -127,6 +130,26 @@ export function parseFormConfig(raw: unknown): FormConfig {
 export function parseStepConfig(raw: unknown): StepConfig | null {
   const r = stepConfigSchema.safeParse(raw);
   return r.success ? r.data : null;
+}
+
+/**
+ * Il passo "che lavoro" (source "jobs") mostra solo i lavori del servizio scelto.
+ * Senza servizio, o per un servizio senza elenco, il passo non c'è proprio.
+ */
+export function jobOptions(config: StepConfig, answers: Answers): Option[] | null {
+  if (config.type !== "select" || config.source !== "jobs") return null;
+  const servizio = String(answers.servizio ?? "");
+  const propri = servizio ? config.options.filter((o) => o.parent === servizio) : [];
+  // Le voci senza servizio ("Altro lavoro") stanno in coda, mai da sole.
+  return propri.length ? [...propri, ...config.options.filter((o) => !o.parent)] : [];
+}
+
+/** Se un passo va mostrato (e quindi risposto) con queste risposte. Stessa regola nel browser e al submit. */
+export function stepVisible(config: StepConfig, answers: Answers, prefilled: Record<string, string>, key: string): boolean {
+  if (!conditionMet(config.condition, answers)) return false;
+  if (config.skipIfPrefilled && prefilled[key]) return false;
+  const lavori = jobOptions(config, answers);
+  return lavori === null || lavori.length > 0;
 }
 
 /** Valuta una condizione sulle risposte correnti. */

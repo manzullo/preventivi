@@ -3,6 +3,7 @@
 
 import type { Prisma } from "@/generated/prisma";
 import { db } from "@/lib/db";
+import vocabolario from "../../../data/competenze.json";
 import {
   parseFormConfig,
   parseStepConfig,
@@ -13,7 +14,33 @@ import {
 
 export const DEFAULT_FORM_SLUG = "preventivo";
 
-async function dynamicOptions(source: "services" | "cities"): Promise<Option[]> {
+/** Quanti lavori per servizio nel passo "che lavoro": i più cercati, poi "Altro". */
+const JOBS_PER_SERVICE = 9;
+
+/**
+ * Il primo passo di Instapro ("Che lavori vuoi far realizzare?"): i lavori più
+ * cercati per ogni servizio, dal vocabolario in data/competenze.json (già in
+ * ordine di ricerca). Il valore è il testo stesso: arriva leggibile nel lead.
+ */
+async function jobOptions(): Promise<Option[]> {
+  // Nel vocabolario ci sono anche nomi di mestieri ("Commercialisti" tra i
+  // notai): sono categorie, non lavori, e qui confonderebbero.
+  const mestieri = new Set(
+    (await db.service.findMany({ select: { name: true, plural: true, singular: true } })).flatMap((s) => [s.name, s.plural, s.singular].filter((x): x is string => Boolean(x)).map((x) => x.toLowerCase())),
+  );
+  const out: Option[] = [];
+  for (const [servizio, tutti] of Object.entries(vocabolario as Record<string, string[]>)) {
+    const lavori = tutti.filter((l) => !mestieri.has(l.toLowerCase())).slice(0, JOBS_PER_SERVICE);
+    // Con meno di tre voci la domanda non aiuta: il passo si salta.
+    if (lavori.length < 3) continue;
+    for (const l of lavori) out.push({ value: l, label: l, parent: servizio });
+  }
+  out.push({ value: "Altro lavoro", label: "Altro lavoro", description: "Lo racconti tu tra poco" });
+  return out;
+}
+
+async function dynamicOptions(source: "services" | "cities" | "jobs"): Promise<Option[]> {
+  if (source === "jobs") return await jobOptions();
   if (source === "services") {
     const rows = await db.service.findMany({ where: { active: true }, orderBy: { position: "asc" } });
     return rows.map((s) => ({ value: s.slug, label: s.plural }));
@@ -63,7 +90,6 @@ export async function getPublicForm(slug: string, opts: { includeDraft?: boolean
   };
 }
 
-/** Form di default: sei passi, contatti in coda. Idempotente. */
 /**
  * Form di default (PIANO 3d): una domanda per schermata, il perché sotto
  * ogni richiesta, riepilogo prima dei contatti, contatti per ultimi.
@@ -83,6 +109,7 @@ export const DEFAULT_FORM_CONFIG = {
 
 export const DEFAULT_FORM_STEPS: { key: string; type: string; config: Record<string, unknown> }[] = [
   { key: "servizio", type: "select", config: { title: "Di cosa hai bisogno?", subtitle: "Scegli la categoria: potrai descrivere il lavoro tra poco.", required: true, skipIfPrefilled: true, options: [], source: "services", searchable: true, placeholder: "Es. idraulico, fotografo, commercialista" } },
+  { key: "lavoro", type: "select", config: { title: "Che lavoro devi far fare?", subtitle: "Scegli il più vicino al tuo: i dettagli li scrivi tra poco.", required: true, skipIfPrefilled: true, options: [], source: "jobs", searchable: false } },
   { key: "citta", type: "select", config: { title: "Dove ti serve?", subtitle: "Dove va fatto il lavoro. Puoi scrivere anche un comune piccolo: lo agganciamo al capoluogo.", required: true, skipIfPrefilled: true, options: [], source: "cities", searchable: true, placeholder: "Cerca una città o un comune" } },
   { key: "budget", type: "cards", config: { title: "Quanto pensi di spendere?", subtitle: "Serve solo a girare la richiesta alle persone giuste. Non è vincolante.", required: true, skipIfPrefilled: true, multiple: false, columns: 2, options: [
     { value: "lt200", label: "Meno di 200 €" },

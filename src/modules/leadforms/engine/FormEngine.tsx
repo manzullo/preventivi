@@ -8,7 +8,7 @@ import { Button, cn } from "@/design/ui";
 import { ContactStep } from "./ContactStep";
 import { StepRenderer } from "./StepRenderer";
 import { beacon, ensureVisit, pushDataLayer, sessionId, type Tracking } from "./client-tracking";
-import { EMAIL_RE, PHONE_RE, contaCifre, conditionMet, type Answers, type Contact, type PublicForm, type PublicStep } from "../schema";
+import { EMAIL_RE, PHONE_RE, contaCifre, stepVisible, type Answers, type Contact, type PublicForm, type PublicStep } from "../schema";
 
 type Props = {
   form: PublicForm;
@@ -49,7 +49,7 @@ export function FormEngine({ form, prefilled = {}, preview = false, clientId, su
   const viewed = useRef(new Set<string>());
 
   const visible = useMemo(
-    () => form.steps.filter((s) => conditionMet(s.config.condition, answers) && !(s.config.skipIfPrefilled && prefilled[s.key])),
+    () => form.steps.filter((s) => stepVisible(s.config, answers, prefilled, s.key)),
     [form.steps, answers, prefilled],
   );
   const total = visible.length;
@@ -127,7 +127,8 @@ export function FormEngine({ form, prefilled = {}, preview = false, clientId, su
   );
 
   function setAnswer(key: string, value: Answers[string], autoAdvance?: boolean) {
-    setAnswers((a) => ({ ...a, [key]: value }));
+    // Cambiato il servizio, il lavoro scelto prima non vale più.
+    setAnswers((a) => (key === "servizio" && a.servizio !== value ? { ...Object.fromEntries(Object.entries(a).filter(([k]) => k !== "lavoro")), [key]: value } : { ...a, [key]: value }));
     setErrors({});
     if (autoAdvance && step && step.key === key && !isLast) {
       window.setTimeout(() => advance(step, index), 220);

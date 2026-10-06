@@ -9,7 +9,7 @@ import { competenze, coppieCompetenzaCitta } from "@/modules/directory/skills";
 
 export const revalidate = 3600;
 
-const STATIC = [paths.home(), paths.methodology(), "/cerca/", "/per-agenzie/", "/chi-siamo/", "/rivendica/", "/recensioni/", "/mappa/", "/competenze/"];
+const STATIC = [paths.home(), paths.methodology(), "/cerca/", "/per-professionisti/", "/chi-siamo/", "/rivendica/", "/recensioni/", "/mappa/", "/competenze/"];
 
 /** Statiche + pagine CMS pubblicate (statiche a /slug/, blog a /blog/slug/). */
 async function staticUrls(): Promise<{ url: string; lastModified?: Date }[]> {

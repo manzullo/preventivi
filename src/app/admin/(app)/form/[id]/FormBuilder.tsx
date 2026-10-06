@@ -393,6 +393,7 @@ function StepEditor({ step, others, error, onMeta, onCfg, onDelete }: { step: St
                 <option value="">opzioni manuali</option>
                 <option value="services">servizi della directory</option>
                 <option value="cities">capoluoghi</option>
+                <option value="jobs">lavori del servizio scelto</option>
               </select>
             </Field>
             <Field label="Placeholder"><input className={IN} value={s(c.placeholder)} onChange={(e) => onCfg({ placeholder: e.target.value || undefined })} /></Field>

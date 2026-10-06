@@ -90,7 +90,7 @@ export async function SiteFooter() {
             <Link href="/mappa/" className="hover:text-action">
               Mappa
             </Link>
-            <Link href="/per-agenzie/" className="hover:text-action">
+            <Link href="/per-professionisti/" className="hover:text-action">
               Per i professionisti
             </Link>
             <Link href="/candidatura/" className="hover:text-action">
