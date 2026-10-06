@@ -115,6 +115,7 @@ export default async function AgencyPage({ params, searchParams }: { params: Par
             <Rating value={a.rating} count={a.reviewCount} size="lg" />
             {a.verified && <Badge>Verificata</Badge>}
             {a.claimed && !a.verified && <Badge tone="neutral">Rivendicata</Badge>}
+            {a.vatNumber && <Badge tone="neutral">Con partita IVA</Badge>}
           </div>
           {externals.length > 0 && (
             <p className="t-meta mt-2">

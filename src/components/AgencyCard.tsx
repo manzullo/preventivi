@@ -43,6 +43,8 @@ export function AgencyCard({ agency: a, position }: { agency: AgencyCardConEvide
         <div className="flex shrink-0 flex-col items-end gap-1.5">
           <Rating value={a.rating} count={a.reviewCount} />
           {a.verified && <Badge>Verificata</Badge>}
+          {/* Il "Controllo qualità" di Instapro: chi lavora con partita IVA. */}
+          {a.vatNumber && <Badge tone="neutral">Con partita IVA</Badge>}
         </div>
       </div>
 

@@ -106,6 +106,8 @@ export const paths = {
   alternative: (c: string) => `/${ALTERNATIVE_PREFIX}${c}/`,
   methodology: () => "/metodologia/",
   thanks: () => "/grazie/",
+  /** Pagina della richiesta per il cliente: k è la firma dell'id (lib/crypto). */
+  request: (id: string, k: string) => `/richiesta/${id}/?k=${encodeURIComponent(k)}`,
   quote: (query?: Query) => `/preventivo/${qs(query)}`,
   withQuery: (path: string, query?: Query) => `${path}${qs(query)}`,
 };
