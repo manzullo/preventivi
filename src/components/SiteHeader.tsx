@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { MenuMobile } from "./MenuMobile";
 import { Button } from "@/design/ui";
@@ -5,32 +6,26 @@ import { db } from "@/lib/db";
 import { CTA_LABEL, PRO_CTA_LABEL, PRO_CTA_QUESTION } from "@/lib/cta";
 import { paths } from "@/lib/site";
 
-// Il segno del marchio: un ago di bussola bianco su quadrato blu. È disegnato
-// qui dentro invece che caricato come immagine, così resta nitido a ogni misura
-// e non aggiunge una richiesta di rete in cima alla pagina.
+// Il segno del marchio: il lupo in giacca e cravatta del logo consegnato. Un
+// PNG piccolo (95x128) basta per le misure dell'intestazione anche sugli
+// schermi retina; il vettoriale completo resta in /lupo.svg.
 export function LogoIcona({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 100 100" aria-hidden className={className} focusable="false">
-      <rect width="100" height="100" rx="22.5" fill="#0b57d0" />
-      <polygon points="79,18 42,39 59,56" fill="#fff" />
-      <polygon points="18,82 38,43 54,61" fill="#fff" />
-    </svg>
-  );
+  return <Image src="/lupo.png" alt="" aria-hidden width={95} height={128} loading="eager" className={`object-contain ${className}`} />;
 }
 
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
     <span className={`font-extrabold tracking-[-0.033em] ${className}`}>
-      Mister<span className="text-action">Wolf</span>
+      Mister <span className="text-[#fac106]">Wolf</span>
     </span>
   );
 }
 
 /** Marchio completo: icona più nome, come nel logo consegnato. */
-export function Marchio({ className = "", testo = "text-[17px] sm:text-[22px]", icona = "size-6 sm:size-8" }: { className?: string; testo?: string; icona?: string }) {
+export function Marchio({ className = "", testo = "text-[17px] sm:text-[22px]", icona = "size-8 sm:size-11" }: { className?: string; testo?: string; icona?: string }) {
   return (
     <span className={`inline-flex items-center gap-2 ${className}`}>
-      <LogoIcona className={`${icona} shrink-0 rounded-[22%]`} />
+      <LogoIcona className={`${icona} shrink-0`} />
       <Wordmark className={testo} />
     </span>
   );
