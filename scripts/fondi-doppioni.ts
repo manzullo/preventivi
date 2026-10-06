@@ -1,5 +1,5 @@
 // Doppioni: lo stesso professionista entrato due volte da fonti diverse
-// (google_maps, osm, paginegialle, prontopro). Una sola scheda per
+// (google_maps, osm, paginegialle, prontopro, instapro). Una sola scheda per
 // professionista: le sedi in più restano dentro la scheda, non diventano
 // schede nuove. Sicuri: stesso place_id Google, stesso dominio, stesso
 // telefono con nome simile, stesso nome nella stessa città. Da guardare a
@@ -19,7 +19,7 @@ import { argomenti } from "./lib/siti";
 const { opt, flag } = argomenti();
 const APPLICA = flag("--confirm") && !flag("--dry");
 const LIMIT = Number(opt("--limit", "0"));
-const FONTI = opt("--fonti", "google_maps,osm,paginegialle,prontopro").split(",").map((s) => s.trim()).filter(Boolean);
+const FONTI = opt("--fonti", "google_maps,osm,paginegialle,prontopro,instapro").split(",").map((s) => s.trim()).filter(Boolean);
 
 const tel = (t: string | null) => (t ?? "").replace(/[^0-9]/g, "").replace(/^0039/, "").replace(/^39(?=\d{9,})/, "");
 // Forme giuridiche e parole di mestiere non distinguono due professionisti:

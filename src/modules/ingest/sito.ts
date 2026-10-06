@@ -16,8 +16,11 @@ export type SiteConfig = {
    * valori di `categorie` e dallo slug (o da `citta[slug]`) della città.
    */
   start: string;
-  /** Slug nostro → come il sito scrive la categoria nell'indirizzo. */
-  categorie: Record<string, string>;
+  /**
+   * Slug nostro → come il sito scrive la categoria nell'indirizzo. Una lista
+   * quando al nostro servizio corrispondono più categorie del sito.
+   */
+  categorie: Record<string, string | string[]>;
   /** Slug nostro della città → come la scrive il sito (se diverso). */
   citta?: Record<string, string>;
   /** Regex sugli href: link alle schede delle attività. */
@@ -30,9 +33,11 @@ export type SiteConfig = {
   pausaMs?: number;
   /**
    * Come leggere la scheda: "jsonld" (predefinito) o "prontopro", che non
-   * pubblica JSON-LD ma il profilo nei dati di Next.js (__NEXT_DATA__).
+   * pubblica JSON-LD ma il profilo nei dati di Next.js (__NEXT_DATA__), o
+   * "instapro", che legge i professionisti direttamente dalle pagine elenco
+   * (il profilo si compone nel browser e nell'HTML non c'è).
    */
-  estrattore?: "jsonld" | "prontopro";
+  estrattore?: "jsonld" | "prontopro" | "instapro";
 };
 
 const BUSINESS = /LocalBusiness|Organization|ProfessionalService|HomeAndConstructionBusiness|Plumber|Electrician|HousePainter|Locksmith|RoofingContractor|GeneralContractor|HVACBusiness|MovingCompany|Attorney|LegalService|AccountingService|Notary|Dentist|Physician|MedicalBusiness|HealthAndBeautyBusiness|BeautySalon|HairSalon|DaySpa|AutoRepair|AutoBodyShop|Florist|Store|FoodEstablishment|EducationalOrganization|Photograph/i;
@@ -110,6 +115,68 @@ export function mapProntoPro(html: string, ctx: { source: string; url: string; s
   };
 }
 
+const testo = (h: string) =>
+  h
+    .replace(/<script[\s\S]*?<\/script>|<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<br\s*\/?>|<\/(p|div|li|h\d|span)>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/g, " ")
+    .replace(/&amp;/g, "&")
+    .replace(/&#x27;|&#39;|&rsquo;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/[ \t]+/g, " ")
+    .split("\n")
+    .map((r) => r.trim())
+    .filter(Boolean);
+
+/**
+ * Pagina elenco Instapro → un IngestRecord per professionista. Ogni card ha
+ * il link /ditta/{slug}, nome, "4,9/5" con il numero di recensioni e la
+ * presentazione; telefono e indirizzo no (Instapro li dà solo a chi paga),
+ * quindi le schede restano bozze finché i recapiti non arrivano da altre fonti.
+ */
+export function mapInstaproElenco(html: string, ctx: { source: string; url: string; serviceSlug: string; citySlug: string }): IngestRecord[] {
+  const re = /<a\b[^>]*href=["'](?:https:\/\/www\.instapro\.it)?\/ditta\/([a-z0-9-]+)\/?["'][^>]*>([\s\S]*?)<\/a>/gi;
+  const hits = [...html.matchAll(re)].map((m) => ({ slug: m[1], at: m.index ?? 0, label: testo(m[2]).join(" ") }));
+  const bySlug = new Map<string, { at: number; label: string }>();
+  for (const h of hits) {
+    const prev = bySlug.get(h.slug);
+    if (!prev) bySlug.set(h.slug, { at: h.at, label: h.label });
+    else if (!prev.label && h.label) prev.label = h.label;
+  }
+  const ordine = [...bySlug.entries()].sort((a, b) => a[1].at - b[1].at);
+  const out: IngestRecord[] = [];
+  ordine.forEach(([slug, h], i) => {
+    const fine = ordine[i + 1]?.[1].at ?? Math.min(html.length, h.at + 20000);
+    const righe = testo(html.slice(h.at, fine));
+    const name = h.label || righe[0];
+    if (!name || name.length > 120) return;
+    const blocco = righe.join("\n");
+    const voto = /(\d[.,]\d)\s*\/\s*5/.exec(blocco);
+    const n = /(\d[\d.]*)\s*(?:recension|valutazion|review)/i.exec(blocco);
+    const rating = voto ? Number(voto[1].replace(",", ".")) : NaN;
+    const count = n ? Number(n[1].replace(/\./g, "")) : NaN;
+    // La presentazione è la riga più lunga che non sia la recensione in evidenza.
+    const description = righe
+      .filter((r) => r !== name && r.length > 60 && !/^contatta|recension/i.test(r))
+      .sort((a, b) => b.length - a.length)[0];
+    const rec: IngestRecord = {
+      source: ctx.source,
+      sourceRef: `${ctx.source}:${slug}`,
+      sourceUrl: `https://www.instapro.it/ditta/${slug}`,
+      name,
+      cityName: ctx.citySlug,
+      description,
+      serviceSlugs: [ctx.serviceSlug],
+      reviews: [],
+    };
+    if (Number.isFinite(rating) && rating >= 1 && rating <= 5) rec.rating = rating;
+    if (Number.isFinite(count) && count > 0) rec.reviewCount = count;
+    out.push(rec);
+  });
+  return out;
+}
+
 /** Oggetto JSON-LD di un'attività → IngestRecord. */
 export function mapLdBusiness(o: Ld, ctx: { source: string; url: string; serviceSlug: string; citySlug: string }): IngestRecord | null {
   const name = str(o.name);
@@ -185,21 +252,44 @@ export function links(html: string, base: string, pattern: RegExp): string[] {
  */
 export async function scrapeSite(cfg: SiteConfig, opts: { serviceSlug: string; citySlug: string; limit?: number; log?: (s: string) => void }): Promise<IngestRecord[]> {
   const log = opts.log ?? (() => undefined);
-  const cat = cfg.categorie[opts.serviceSlug];
-  if (!cat) return [];
+  const cats = [cfg.categorie[opts.serviceSlug] ?? []].flat();
+  if (!cats.length) return [];
   const citta = cfg.citta?.[opts.citySlug] ?? opts.citySlug;
-  let pagina: string | undefined = cfg.start.replace("{categoria}", cat).replace("{citta}", citta);
   const schede = new Set<string>();
+  const dirette = new Map<string, IngestRecord>();
   const viste = new Set<string>();
-  for (let n = 0; pagina && n < (cfg.maxPagine ?? 10) && !viste.has(pagina); n++) {
-    viste.add(pagina);
-    const html = await politeGet(pagina, { minDelayMs: cfg.pausaMs });
-    for (const l of links(html, pagina, new RegExp(cfg.scheda))) schede.add(l);
-    log(`elenco ${n + 1}: ${pagina} · schede finora ${schede.size}`);
-    if (opts.limit && schede.size >= opts.limit) break;
-    pagina = cfg.successiva ? links(html, pagina, new RegExp(cfg.successiva)).find((u) => !viste.has(u)) : undefined;
+  const basta = () => Boolean(opts.limit && schede.size + dirette.size >= opts.limit);
+  for (const cat of cats) {
+    let pagina: string | undefined = cfg.start.replace("{categoria}", cat).replace("{citta}", citta);
+    for (let n = 0; pagina && n < (cfg.maxPagine ?? 10) && !viste.has(pagina) && !basta(); n++) {
+      viste.add(pagina);
+      let html: string;
+      try {
+        html = await politeGet(pagina, { minDelayMs: cfg.pausaMs });
+      } catch (e) {
+        // Una categoria che il sito non ha in quella città (404) non ferma le altre.
+        log(`elenco non disponibile: ${pagina} · ${String(e).slice(0, 80)}`);
+        break;
+      }
+      if (cfg.estrattore === "instapro") {
+        for (const r of mapInstaproElenco(html, { source: cfg.source, url: pagina, serviceSlug: opts.serviceSlug, citySlug: opts.citySlug })) {
+          if (!dirette.has(r.sourceRef)) dirette.set(r.sourceRef, r);
+        }
+      } else {
+        for (const l of links(html, pagina, new RegExp(cfg.scheda))) schede.add(l);
+      }
+      log(`elenco ${n + 1}: ${pagina} · schede finora ${schede.size + dirette.size}`);
+      // La successiva è la pagina col numero più basso dopo questa: "1, 2, 3…
+      // 29" in fondo all'elenco non deve far tornare a pagina 1 o saltare a 29.
+      const numero = (u: string) => Number(/(\d+)(?:\.html)?$/.exec(u)?.[1] ?? NaN);
+      pagina = cfg.successiva
+        ? links(html, pagina, new RegExp(cfg.successiva))
+            .filter((u) => !viste.has(u) && !(numero(u) <= n + 1))
+            .sort((a, b) => (numero(a) || 0) - (numero(b) || 0))[0]
+        : undefined;
+    }
   }
-  const out: IngestRecord[] = [];
+  const out: IngestRecord[] = [...dirette.values()].slice(0, opts.limit ?? Infinity);
   for (const url of [...schede].slice(0, opts.limit ?? Infinity)) {
     try {
       const html = await politeGet(url, { minDelayMs: cfg.pausaMs });

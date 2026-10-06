@@ -86,7 +86,7 @@ export default async function AgencyPage({ params, searchParams }: { params: Par
   // Sedi in più della stessa azienda: una scheda sola, gli indirizzi elencati qui.
   const sediInPiu = (Array.isArray(a.locations) ? (a.locations as { via?: string; cap?: string; citta?: string }[]) : []).filter((l) => l && (l.via || l.citta));
   const social = Object.entries((a.social as Record<string, string | null> | null) ?? {}).filter((e): e is [string, string] => Boolean(e[1]));
-  const SOURCE_NAME: Record<string, string> = { google: "Google", google_maps: "Google", osm: "OpenStreetMap", prontopro: "ProntoPro", paginegialle: "PagineGialle" };
+  const SOURCE_NAME: Record<string, string> = { google: "Google", google_maps: "Google", osm: "OpenStreetMap", prontopro: "ProntoPro", instapro: "Instapro", paginegialle: "PagineGialle" };
   const faq = agencyFaq(a, { auto: site.faqAuto });
   const waHref =
     site.whatsappCta && a.whatsapp

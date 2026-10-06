@@ -2,7 +2,7 @@ import { db } from "@/lib/db";
 
 // Domini condivisi da tante attività (social, link-in-bio, directory): come
 // "sito" non identificano nessuno e non devono far unire schede diverse.
-const CONDIVISI = /(^|\.)(facebook\.com|fb\.com|instagram\.com|linktr\.ee|tiktok\.com|linkedin\.com|youtube\.com|twitter\.com|x\.com|wa\.me|whatsapp\.com|google\.com|g\.page|business\.site|goo\.gl|paginegialle\.it|prontopro\.it)$/;
+const CONDIVISI = /(^|\.)(facebook\.com|fb\.com|instagram\.com|linktr\.ee|tiktok\.com|linkedin\.com|youtube\.com|twitter\.com|x\.com|wa\.me|whatsapp\.com|google\.com|g\.page|business\.site|goo\.gl|paginegialle\.it|prontopro\.it|instapro\.it)$/;
 
 export function normalizeDomain(url?: string | null): string | undefined {
   if (!url) return undefined;

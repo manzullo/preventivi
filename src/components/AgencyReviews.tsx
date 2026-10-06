@@ -12,6 +12,7 @@ export const SOURCE_LABEL: Record<string, string> = {
   google: "Google",
   google_maps: "Google",
   prontopro: "ProntoPro",
+  instapro: "Instapro",
   paginegialle: "PagineGialle",
   osm: "OpenStreetMap",
   sortlist: "Sortlist",

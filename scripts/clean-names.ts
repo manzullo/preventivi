@@ -10,7 +10,7 @@ import { argomenti } from "./lib/siti";
 const { opt, flag } = argomenti();
 const DRY = flag("--dry") || !flag("--confirm");
 const LIMIT = Number(opt("--limit", "0"));
-const FONTI = opt("--fonti", "google_maps,osm,paginegialle,prontopro").split(",").map((s) => s.trim()).filter(Boolean);
+const FONTI = opt("--fonti", "google_maps,osm,paginegialle,prontopro,instapro").split(",").map((s) => s.trim()).filter(Boolean);
 
 const PROMO_FISSE = "top|migliore|migliori|n\\.?\\s?1|#1|numero uno|leader|economico|economici|prezzi bassi|preventivo gratuito|preventivi gratuiti|pronto intervento|24 ?h|24 ore|h24|a domicilio|professionale|qualificato|certificato|esperto|specializzato|servizi|riparazioni|installazione|assistenza|zona";
 const SEP = /\s+[–—|·:]\s+|\s+-\s+/;

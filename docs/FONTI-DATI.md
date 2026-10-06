@@ -17,6 +17,7 @@ conviene farla leggere a un avvocato, soprattutto la parte GDPR.
 | **Albi professionali** (avvocati, commercialisti, architetti, geometri, psicologi, notai) | nome, numero di iscrizione, sede | consultazione dei siti degli ordini | Pubblici per legge per la verifica dell'iscrizione; l'uso massivo per costruire un elenco commerciale è discutibile. Meglio usarli per verificare chi è già in elenco | 0 € | Badge "iscritto all'albo" sulla scheda |
 | **Iscrizione diretta e rivendicazione** | tutto, con consenso | `/candidatura/`, `/rivendica/` (già pronti) | nessun rischio | 0 € | Il canale da spingere appena c'è traffico |
 | ProntoPro, PagineGialle | ProntoPro: nome, categoria, comune, presentazione (niente recapiti). PagineGialle: anche indirizzo, telefono, email, sito | `--fonte sito:prontopro`, `--fonte sito:paginegialle` (sezione 2) | i termini vietano l'estrazione e le banche dati sono protette: rischio contrattuale e sui generis, come per Maps | 0 € | **Solo per la cernita** (decisione del 2026-10-05): elenco di chi esiste, da incrociare con Maps e coi siti prima di pubblicare |
+| Instapro | nome, voto e numero di recensioni, presentazione, città; niente recapiti. Solo lavori per la casa (29 categorie, mappate in data/siti/instapro.json) | `--fonte sito:instapro` | come ProntoPro | 0 € | Richiesta da Ale il 2026-10-06, stessa regola: bozze finché i recapiti non arrivano da Maps o dal sito |
 | Instapro, Houzz, StarOfService | — | — | come sopra | — | Non si usano |
 
 ## 2. Gli scraper (decisione del 2026-10-05: niente Apify, scraper nostri)
@@ -92,6 +93,7 @@ INGEST_ENABLED=1 npm run scrape -- --fonte sito:nomesito --city milano --service
 # cernita: PagineGialle e ProntoPro
 INGEST_ENABLED=1 npm run scrape -- --fonte sito:paginegialle --city roma --service idraulici,elettricisti,imbianchini,fotografi,commercialisti --confirm
 INGEST_ENABLED=1 npm run scrape -- --fonte sito:prontopro --city roma --service idraulici,elettricisti,imbianchini,fotografi,commercialisti --confirm
+INGEST_ENABLED=1 npm run scrape -- --fonte sito:instapro --city roma --service all --confirm
 
 # rilegge il grezzo già scaricato, senza rete
 INGEST_ENABLED=1 npm run scrape -- --fonte maps --city roma --service idraulici --reuse --confirm
