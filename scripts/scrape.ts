@@ -53,7 +53,9 @@ async function main() {
   const dir = `data/raw/${nomeFonte}`;
   fs.mkdirSync(dir, { recursive: true });
   const site: SiteConfig | null = FONTE.startsWith("sito:") ? JSON.parse(fs.readFileSync(`data/siti/${nomeFonte}.json`, "utf8")) : null;
-  const browser = FONTE === "maps" && !REUSE ? await launchBrowser() : null;
+  // Il browser si apre solo alla prima ricerca vera: con --reuse le categorie
+  // già scaricate non lo usano, quelle mancanti sì.
+  let browser: Awaited<ReturnType<typeof launchBrowser>> | null = null;
 
   const tutti: IngestRecord[] = [];
   let fuoriTema = 0;
@@ -72,7 +74,7 @@ async function main() {
           fs.writeFileSync(file, JSON.stringify(records));
         } else if (FONTE === "maps") {
           const query = `${((s.queries as string[]) ?? [s.name])[0]} ${city.name}`;
-          const places: MapsPlace[] = await searchMaps(browser!, query, { max: MAX, log: console.log });
+          const places: MapsPlace[] = await searchMaps((browser ??= await launchBrowser()), query, { max: MAX, log: console.log });
           records = places.map((p) => mapsToRecord(p, s.slug, city.slug));
           fs.writeFileSync(file, JSON.stringify(records));
         } else if (site) {
