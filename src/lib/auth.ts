@@ -10,7 +10,10 @@ import { db } from "@/lib/db";
 import { verifyPassword } from "@/lib/password";
 
 export const ADMIN_COOKIE = "ma_admin";
-const TTL_MS = 1000 * 60 * 60 * 24 * 14;
+// Senza "Ricordati di me" la sessione dura un giorno e il cookie sparisce alla
+// chiusura del browser; con la spunta resta un anno su quel dispositivo.
+export const TTL_BREVE_MS = 1000 * 60 * 60 * 24;
+export const TTL_LUNGO_MS = 1000 * 60 * 60 * 24 * 365;
 
 const secret = () => process.env.APP_SECRET || "dev-secret-change-me";
 
@@ -28,10 +31,10 @@ export type Ruolo = keyof typeof RUOLI;
 
 export type Sessione = { email: string; ruolo: Ruolo };
 
-export function makeToken(email = "", ruolo: Ruolo = "owner"): string {
+export function makeToken(email = "", ruolo: Ruolo = "owner", ttlMs = TTL_BREVE_MS): string {
   // L'email viaggia codificata: nel cookie non devono finire punti extra che
   // spezzerebbero il conteggio delle parti.
-  const p = `admin.${Buffer.from(email).toString("base64url")}.${ruolo}.${Date.now() + TTL_MS}`;
+  const p = `admin.${Buffer.from(email).toString("base64url")}.${ruolo}.${Date.now() + ttlMs}`;
   return `${p}.${sign(p)}`;
 }
 

@@ -22,6 +22,10 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
           <span className="t-meta mb-1.5 block text-ink">Password</span>
           <input type="password" name="password" autoComplete="current-password" className="w-full rounded-slot border-[1.5px] border-line px-4 py-3 text-[15px] outline-none focus:border-action" />
         </label>
+        <label className="mt-4 flex cursor-pointer items-center gap-2.5">
+          <input type="checkbox" name="ricorda" value="1" defaultChecked className="size-4 accent-[var(--color-action)]" />
+          <span className="text-[15px] text-ink">Ricordati di me</span>
+        </label>
         {failed && <p className="mt-3 text-sm font-semibold text-brand">Credenziali errate.</p>}
         <Button type="submit" arrow className="mt-5 w-full">
           Entra

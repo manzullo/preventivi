@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import type { Prisma } from "@/generated/prisma";
-import { ADMIN_COOKIE, checkCredentials, isAdmin, makeToken } from "@/lib/auth";
+import { ADMIN_COOKIE, TTL_BREVE_MS, TTL_LUNGO_MS, checkCredentials, isAdmin, makeToken } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { savePayloadSchema } from "@/modules/leadforms/save-schema";
 
@@ -19,8 +19,16 @@ export async function login(formData: FormData) {
   const destinazione = torna.startsWith("/") && !torna.startsWith("//") ? torna : "/admin/";
   const s = await checkCredentials(email, pw);
   if (!s) redirect(`/admin/login/?errore=1${torna ? `&torna=${encodeURIComponent(torna)}` : ""}`);
+  const ricorda = formData.get("ricorda") === "1";
   const c = await cookies();
-  c.set(ADMIN_COOKIE, makeToken(s.email, s.ruolo), { httpOnly: true, sameSite: "lax", path: "/", secure: process.env.NODE_ENV === "production", maxAge: 60 * 60 * 24 * 14 });
+  c.set(ADMIN_COOKIE, makeToken(s.email, s.ruolo, ricorda ? TTL_LUNGO_MS : TTL_BREVE_MS), {
+    httpOnly: true,
+    sameSite: "lax",
+    path: "/",
+    secure: process.env.NODE_ENV === "production",
+    // Senza maxAge è un cookie di sessione: si cancella chiudendo il browser.
+    ...(ricorda ? { maxAge: TTL_LUNGO_MS / 1000 } : {}),
+  });
   redirect(destinazione);
 }
 
