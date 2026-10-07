@@ -15,9 +15,11 @@ HOST="${DEPLOY_HOST:-root@217.154.105.171}"
 DIR="${DEPLOY_DIR:-/root/misterwolf}"
 KEY="${DEPLOY_KEY:-$HOME/.ssh/ionos_vps}"
 
+# --delete toglie dal server i file spariti dal codice: backup/ sta in
+# /root/misterwolf ma non nel repo, quindi va escluso o si cancellano i dump.
 rsync -az --delete -e "ssh -i $KEY" \
   --exclude node_modules --exclude .next --exclude .git --exclude .claude --exclude .env \
-  --exclude '*.db' --exclude 'data/raw' ./ "$HOST:$DIR/"
+  --exclude '*.db' --exclude 'data/raw' --exclude backup ./ "$HOST:$DIR/"
 
 ssh -i "$KEY" "$HOST" "cd $DIR && sh scripts/migra.sh && docker compose up -d --build && sleep 15 && docker compose ps"
 curl -sI "${NEXT_PUBLIC_SITE_URL:?NEXT_PUBLIC_SITE_URL}/" | head -1
