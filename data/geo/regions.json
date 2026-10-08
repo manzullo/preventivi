@@ -1,0 +1,122 @@
+[
+ {
+  "id": "3db50be2-b5ad-496a-8618-5675b02b9682",
+  "slug": "abruzzo",
+  "name": "Abruzzo",
+  "order": 0
+ },
+ {
+  "id": "2bbf07e6-08a7-4e24-a050-0a143a8fedc0",
+  "slug": "basilicata",
+  "name": "Basilicata",
+  "order": 1
+ },
+ {
+  "id": "cmp883ylf00000tlo4fzbla0y",
+  "slug": "lazio",
+  "name": "Lazio",
+  "order": 1
+ },
+ {
+  "id": "b57d63d5-b9f5-4797-ba39-8b3e595ac588",
+  "slug": "calabria",
+  "name": "Calabria",
+  "order": 2
+ },
+ {
+  "id": "cmp883ylm00010tlo5pp7o5nz",
+  "slug": "lombardia",
+  "name": "Lombardia",
+  "order": 2
+ },
+ {
+  "id": "cmp883ylt00020tlopfzg6iu9",
+  "slug": "toscana",
+  "name": "Toscana",
+  "order": 3
+ },
+ {
+  "id": "cmp883ylw00030tlolvuj4tg3",
+  "slug": "campania",
+  "name": "Campania",
+  "order": 4
+ },
+ {
+  "id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5",
+  "slug": "emilia-romagna",
+  "name": "Emilia-Romagna",
+  "order": 4
+ },
+ {
+  "id": "75ad86b1-0cea-4e76-8590-77932677664a",
+  "slug": "friuli-venezia-giulia",
+  "name": "Friuli-Venezia Giulia",
+  "order": 5
+ },
+ {
+  "id": "03e3dd0e-a1aa-4d4b-84af-942c18954112",
+  "slug": "liguria",
+  "name": "Liguria",
+  "order": 7
+ },
+ {
+  "id": "c1ff3fed-0213-4c6c-91c8-8a09c9245551",
+  "slug": "marche",
+  "name": "Marche",
+  "order": 9
+ },
+ {
+  "id": "692e3d78-cf6d-4f61-8273-0e278bf471cd",
+  "slug": "molise",
+  "name": "Molise",
+  "order": 10
+ },
+ {
+  "id": "beb62461-dc9b-447d-b541-2e89f67e1025",
+  "slug": "piemonte",
+  "name": "Piemonte",
+  "order": 11
+ },
+ {
+  "id": "1ea3614e-4435-4417-ac88-5e9ad45c78cd",
+  "slug": "puglia",
+  "name": "Puglia",
+  "order": 12
+ },
+ {
+  "id": "e517d7bd-2c1c-4995-aac6-9214a0da6f5e",
+  "slug": "sardegna",
+  "name": "Sardegna",
+  "order": 13
+ },
+ {
+  "id": "bfabd790-07b3-4539-808f-3d65f9824414",
+  "slug": "sicilia",
+  "name": "Sicilia",
+  "order": 14
+ },
+ {
+  "id": "43662d78-98ba-4b06-be17-472f982899b0",
+  "slug": "trentino-alto-adige",
+  "name": "Trentino-Alto Adige",
+  "order": 16
+ },
+ {
+  "id": "41a6c353-bb83-4291-a9dc-2409c127dabf",
+  "slug": "umbria",
+  "name": "Umbria",
+  "order": 17
+ },
+ {
+  "id": "b80f9a37-e213-4b57-b226-438398f8dd98",
+  "slug": "valle-d-aosta",
+  "name": "Valle d'Aosta",
+  "order": 18
+ },
+ {
+  "id": "cb438696-cddd-46d0-aff2-bab22a72f718",
+  "slug": "veneto",
+  "name": "Veneto",
+  "order": 19
+ }
+]

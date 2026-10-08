@@ -1,0 +1,84 @@
+# Deploy su VPS (Coolify "Docker Compose" oppure docker compose a mano).
+# Variabili in .env sul server: vedi .env.example.
+services:
+  app:
+    build:
+      context: .
+      # La rete dell'host permette al builder di raggiungere il database sulla
+      # porta pubblicata qui sotto; senza, "db" non esisterebbe ancora.
+      network: host
+      args:
+        DATABASE_URL: ${DATABASE_URL_BUILD}
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL}
+        NEXT_PUBLIC_TILE_URL: ${NEXT_PUBLIC_TILE_URL:-}
+        NEXT_PUBLIC_TILE_ATTRIBUTION: ${NEXT_PUBLIC_TILE_ATTRIBUTION:-}
+        NEXT_PUBLIC_TILE_FILTER: ${NEXT_PUBLIC_TILE_FILTER:-}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-preventivi}:${POSTGRES_PASSWORD}@preventivi-db:5432/${POSTGRES_DB:-preventivi}?schema=public
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      # Solo dal server stesso: il traffico pubblico passa dal proxy.
+      # Sull'host 4460: la 4450 è già del centralino.
+      - "127.0.0.1:4460:4450"
+    networks: [coolify, interna]
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=coolify
+      # Indirizzo ufficiale con www (scelta di Ale per misterwolf.org).
+      - traefik.http.routers.preventivi.rule=Host(`www.${SITE_HOST}`)
+      - traefik.http.routers.preventivi.entrypoints=https
+      - traefik.http.routers.preventivi.tls=true
+      - traefik.http.routers.preventivi.tls.certresolver=letsencrypt
+      - traefik.http.services.preventivi.loadbalancer.server.port=4450
+      # Il dominio nudo manda a www, così l'indirizzo buono è uno solo.
+      - traefik.http.routers.preventivi-apex.rule=Host(`${SITE_HOST}`)
+      - traefik.http.routers.preventivi-apex.entrypoints=https
+      - traefik.http.routers.preventivi-apex.tls=true
+      - traefik.http.routers.preventivi-apex.tls.certresolver=letsencrypt
+      - traefik.http.routers.preventivi-apex.middlewares=preventivi-www
+      - traefik.http.routers.preventivi-apex.service=preventivi
+      - traefik.http.middlewares.preventivi-www.redirectregex.regex=^https://${SITE_HOST_RE}/(.*)
+      - traefik.http.middlewares.preventivi-www.redirectregex.replacement=https://www.${SITE_HOST}/$${1}
+      - traefik.http.middlewares.preventivi-www.redirectregex.permanent=true
+      # Chi arriva su http viene spostato su https, come gli altri siti del server.
+      - traefik.http.routers.preventivi-http.rule=Host(`${SITE_HOST}`) || Host(`www.${SITE_HOST}`)
+      - traefik.http.routers.preventivi-http.entrypoints=http
+      - traefik.http.routers.preventivi-http.middlewares=preventivi-https-redirect
+      - traefik.http.routers.preventivi-http.service=preventivi
+      - traefik.http.middlewares.preventivi-https-redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.preventivi-https-redirect.redirectscheme.permanent=true
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-preventivi}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB:-preventivi}
+    networks:
+      interna:
+        # Nome tutto nostro: "db" da solo, sulla rete del proxy, è lo stesso
+        # nome che usano gli altri progetti sulla macchina.
+        aliases: [preventivi-db]
+    ports:
+      # Solo dal server stesso: serve alla build e ai travasi di dati.
+      # Sull'host 5436: la 5434 è già di prenotaesame.
+      - "127.0.0.1:5436:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-preventivi} -d ${POSTGRES_DB:-preventivi}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+networks:
+  # Rete del proxy Coolify, già esistente sul server.
+  coolify:
+    external: true
+  interna:
+
+volumes:
+  db_data:

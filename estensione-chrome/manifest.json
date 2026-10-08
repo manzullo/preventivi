@@ -1,0 +1,17 @@
+{
+  "manifest_version": 3,
+  "name": "Mister Wolf · Importa",
+  "version": "0.1.0",
+  "description": "Su una pagina elenco di Instapro che stai guardando, aggiunge un pulsante per importare i professionisti mostrati nel Mister Wolf del tuo Mac, come bozze.",
+  "permissions": ["storage"],
+  "host_permissions": ["http://localhost:4450/*"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["https://www.instapro.it/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "options_page": "options.html"
+}

@@ -1,0 +1,285 @@
+// Lead engine: port di PartySpot Forms 3.22.2.
+// Tabelle originali → modelli: forms→Form, form_steps→FormStep,
+// submissions→Submission, step_analytics→StepAnalytics,
+// form_conversions→FormConversion, utm_visits→Visit,
+// email_notifications→Notification (in system.prisma).
+
+model Form {
+  id       String  @id @default(cuid())
+  slug     String  @unique
+  name     String
+  status   String  @default("draft") // draft | active | archived
+  // Testi e comportamento: header, badge, bottone, privacy, successo,
+  // animazioni, redirectUrl, webhookUrl, gtmMode ("load" | "present"),
+  // ga4, clientId di default, valore/valuta del lead, eventType.
+  config   Json
+  testMode Boolean @default(false)
+  // Varianti A/B: i form con lo stesso abGroup si alternano per sessione,
+  // pesati; il confronto sta in Performance.
+  abGroup  String?
+  abWeight Int     @default(50)
+
+  drafts      FormDraft[]
+  steps       FormStep[]
+  submissions Submission[]
+  conversions FormConversion[]
+  analytics   StepAnalytics[]
+  leads       Lead[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model FormStep {
+  id       String  @id @default(cuid())
+  formId   String
+  form     Form    @relation(fields: [formId], references: [id], onDelete: Cascade)
+  position Int
+  // cards | multi | image_select | video | slider | number | select | textarea | contact
+  type     String
+  key      String  // chiave della risposta nel payload ("evento", "budget")
+  enabled  Boolean @default(true)
+  // Domanda, opzioni, media, min/max, obbligatorio, campi contatto.
+  config   Json
+
+  analytics StepAnalytics[]
+
+  @@unique([formId, key])
+  @@index([formId, position])
+}
+
+// Lead parziali: risposte salvate a ogni passo, per recuperare chi abbandona
+// e per riprendere il form nella stessa sessione.
+model FormDraft {
+  id          String   @id @default(cuid())
+  formId      String
+  form        Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  sessionId   String
+  answers     Json
+  contact     Json?
+  lastStepKey String?
+  clientId    String?
+  landingPath String?
+  converted   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([formId, sessionId])
+  @@index([converted, updatedAt])
+}
+
+model Submission {
+  id       String  @id @default(cuid())
+  formId   String
+  form     Form    @relation(fields: [formId], references: [id])
+  answers  Json    // { key: valore } per ogni step
+  contact  Json    // nome, email, telefono con prefisso, azienda
+  testMode Boolean @default(false)
+
+  visitId String?
+  visit   Visit?  @relation(fields: [visitId], references: [id])
+  lead    Lead?
+
+  clientId    String? // sito di origine (embed)
+  landingPath String?
+  ipHash      String?
+  userAgent   String?
+
+  createdAt DateTime @default(now())
+
+  @@index([formId, createdAt])
+}
+
+model Lead {
+  id           String      @id @default(cuid())
+  submissionId String?     @unique
+  submission   Submission? @relation(fields: [submissionId], references: [id])
+  formId       String?
+  form         Form?       @relation(fields: [formId], references: [id])
+
+  // Vista commerciale del lead: campi normalizzati per lo smistamento.
+  serviceId   String?
+  service     Service? @relation(fields: [serviceId], references: [id])
+  cityId      String?
+  city        City?    @relation(fields: [cityId], references: [id])
+  budget      String?
+  timing      String?
+  description String?
+
+  name    String?
+  email   String?
+  phone   String?
+  company String?
+
+  // Attribuzione: gli stessi campi del plugin.
+  gclid       String?
+  gbraid      String?
+  wbraid      String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmTerm     String?
+  utmContent  String?
+  matchType   String?
+  device      String?
+  network     String?
+  landingPath String?
+  clientId    String?
+
+  // Valore per il dataLayer e per l'upload conversioni.
+  value     Float?
+  currency  String  @default("EUR")
+  eventType String?
+
+  status    String    @default("new") // new | qualified | sold | rejected
+  soldPrice Int?
+  soldAt    DateTime?
+
+  // Arricchimento da Google Ads (click_view + search_term_view).
+  adsMeta       Json?
+  adsEnrichedAt DateTime?
+
+  agencyId String?
+  agency   Agency? @relation(fields: [agencyId], references: [id])
+
+  uploads          ConversionUpload[]
+  notificationLogs NotificationLog[]
+  assignments      LeadAssignment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([agencyId])
+}
+
+// Smistamento: un lead proposto/inviato a un'agenzia, con esito.
+model LeadAssignment {
+  id        String    @id @default(cuid())
+  leadId    String
+  lead      Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  agencyId  String
+  agency    Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  status    String    @default("proposed") // proposed | sent | accepted | declined
+  price     Int?
+  note      String?
+  sentAt    DateTime?
+  // Risposta dell'agenzia dal link nell'email (senza login): il contatto del
+  // cliente si vede solo dopo l'accettazione.
+  token          String?   @unique
+  tokenExpiresAt DateTime?
+  respondedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@unique([leadId, agencyId])
+  @@index([agencyId, status])
+}
+
+model StepAnalytics {
+  id          String   @id @default(cuid())
+  formId      String
+  form        Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  stepId      String
+  step        FormStep @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  day         DateTime @db.Date
+  views       Int      @default(0)
+  completions Int      @default(0)
+
+  @@unique([formId, stepId, day])
+}
+
+model FormConversion {
+  id        String  @id @default(cuid())
+  formId    String
+  form      Form    @relation(fields: [formId], references: [id], onDelete: Cascade)
+  name      String  // "Lead SEO"
+  gadsId    String  // AW-XXXXXXXXX
+  gadsLabel String
+  value     Float?
+  currency  String  @default("EUR")
+  enabled   Boolean @default(true)
+  // Upload offline via API: servono l'account e l'ID numerico dell'azione.
+  customerId         String?
+  conversionActionId String?
+  apiUpload          Boolean @default(false)
+
+  @@index([formId])
+}
+
+model Visit {
+  id          String   @id @default(cuid())
+  sessionId   String
+  landingPath String?
+  referrer    String?
+  clientId    String?
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmTerm     String?
+  utmContent  String?
+  gclid       String?
+  gbraid      String?
+  wbraid      String?
+  // Valuetrack dal tracking template: {matchtype} {device} {network}
+  matchType   String?
+  device      String?
+  network     String?
+  searchTerm  String?  // arricchito via Google Ads API
+  ipHash      String?
+  userAgent   String?
+  createdAt   DateTime @default(now())
+
+  // Visita dedotta dagli eventi, non registrata mentre accadeva: ne conosciamo
+  // l'ora e la pagina di ingresso, non la provenienza. Tenerle distinte evita
+  // di contarle come visite dirette, che è quello che sembrerebbero.
+  ricostruita Boolean  @default(false)
+  /** Visita fatta da chi gestisce il sito: resta in archivio ma non si conta. */
+  interna     Boolean  @default(false)
+
+  submissions Submission[]
+
+  @@index([sessionId])
+  @@index([gclid])
+  @@index([createdAt])
+}
+
+// Coda upload conversioni offline verso Google Ads, con retry.
+model ConversionUpload {
+  id                 String    @id @default(cuid())
+  leadId             String
+  lead               Lead      @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  conversionActionId String
+  customerId         String?
+  gclid              String?
+  value              Float?
+  currency           String    @default("EUR")
+  status             String    @default("pending") // pending | sent | failed
+  attempts           Int       @default(0)
+  lastError          String?
+  sentAt             DateTime?
+  createdAt          DateTime  @default(now())
+
+  @@index([status])
+}
+
+// Misurazione server-side: impression card, click contatti, passi del form.
+model AnalyticsEvent {
+  id          String   @id @default(cuid())
+  type        String   // impression | card_click | contact_click | step_view | step_completed | form_submit
+  path        String?
+  agencyId    String?
+  serviceSlug String?
+  citySlug    String?
+  formId      String?
+  stepId      String?
+  meta        Json?
+  sessionId   String?
+  /** Evento generato da chi gestisce il sito: escluso dai conteggi. */
+  interno     Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  @@index([type, createdAt])
+  @@index([agencyId])
+  @@index([formId])
+}
