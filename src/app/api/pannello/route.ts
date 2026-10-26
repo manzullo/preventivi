@@ -2,7 +2,9 @@
 //
 // Il pannello chiama questo indirizzo ogni pochi minuti, insieme a quello
 // degli altri siti, e mette tutto su una pagina sola: visite, richieste e le
-// ultime richieste arrivate. Il formato è lo stesso per tutti i siti ed è
+// ultime richieste arrivate, più gli altri elenchi da guardare (candidature,
+// rivendicazioni...) e le analisi: vedi modules/pannello/dati.ts.
+// Il formato è lo stesso per tutti i siti ed è
 // descritto in docs/CONTRATTO-SITI.md del repository del pannello.
 //
 //   GET /api/pannello/   con  Authorization: Bearer <PANNELLO_TOKEN>
@@ -14,6 +16,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { BASE_URL } from "@/lib/site";
+import { analisi, elenchi } from "@/modules/pannello/dati";
 
 export const dynamic = "force-dynamic";
 
@@ -42,7 +45,7 @@ export async function GET(req: Request) {
   // il raggruppamento, qui basta non perdere la mezzanotte.
   const dal = new Date(ora.getTime() - (GIORNI + 1) * 864e5);
 
-  const [visitePerGiorno, richiestePerGiorno, daGestire, schede, ultime] = await Promise.all([
+  const [visitePerGiorno, richiestePerGiorno, daGestire, schede, ultime, liste, blocchi] = await Promise.all([
     db.$queryRaw<{ g: string; n: number }[]>`
       SELECT to_char(("createdAt" AT TIME ZONE 'UTC') AT TIME ZONE 'Europe/Rome', 'YYYY-MM-DD') AS g, count(*)::int AS n
       FROM "Visit"
@@ -74,7 +77,10 @@ export async function GET(req: Request) {
         agency: { select: { name: true } },
       },
     }),
+    elenchi(),
+    analisi(),
   ]);
+  const nonDisponibili = [...liste.errori, ...blocchi.errori];
 
   const visite = new Map(visitePerGiorno.map((r) => [r.g, r.n]));
   const richieste = new Map(richiestePerGiorno.map((r) => [r.g, r.n]));
@@ -90,7 +96,7 @@ export async function GET(req: Request) {
 
   return NextResponse.json(
     {
-      versione: 1,
+      versione: 2,
       sito: SITO,
       aggiornato: ora.toISOString(),
       visite: { oggi: oggi.visite, ieri: ieri.visite, giorni_7: somma(7, "visite"), giorni_30: somma(GIORNI, "visite") },
@@ -122,6 +128,13 @@ export async function GET(req: Request) {
         link: `${BASE_URL}/admin/lead/${l.id}/`,
       })),
       extra: { schede_pubblicate: schede },
+      elenchi: liste.ok,
+      analisi: [
+        ...blocchi.ok,
+        ...(nonDisponibili.length
+          ? [{ titolo: "Dati non disponibili", nota: `Non è stato possibile leggere: ${nonDisponibili.join(", ")}.` }]
+          : []),
+      ],
     },
     { headers: { "Cache-Control": "no-store" } },
   );
