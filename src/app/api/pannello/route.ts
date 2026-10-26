@@ -3,7 +3,7 @@
 // Il pannello chiama questo indirizzo ogni pochi minuti, insieme a quello
 // degli altri siti, e mette tutto su una pagina sola: visite, richieste e le
 // ultime richieste arrivate, più gli altri elenchi da guardare (candidature,
-// rivendicazioni...) e le analisi: vedi modules/pannello/dati.ts.
+// rivendicazioni, recensioni...) e le analisi: vedi modules/pannello/dati.ts.
 // Il formato è lo stesso per tutti i siti ed è
 // descritto in docs/CONTRATTO-SITI.md del repository del pannello.
 //
@@ -16,7 +16,7 @@ import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { BASE_URL } from "@/lib/site";
-import { analisi, elenchi } from "@/modules/pannello/dati";
+import { STATO_RICHIESTA, analisi, campiRichiesta, elenchi } from "@/modules/pannello/dati";
 
 export const dynamic = "force-dynamic";
 
@@ -61,20 +61,31 @@ export async function GET(req: Request) {
     db.lead.findMany({
       orderBy: { createdAt: "desc" },
       take: 20,
-      select: {
-        id: true,
-        createdAt: true,
-        name: true,
-        email: true,
-        phone: true,
-        company: true,
-        budget: true,
-        timing: true,
-        description: true,
-        status: true,
+      include: {
         service: { select: { plural: true } },
         city: { select: { name: true } },
         agency: { select: { name: true } },
+        form: { select: { name: true } },
+        submission: {
+          select: {
+            answers: true,
+            contact: true,
+            visit: {
+              select: {
+                landingPath: true,
+                referrer: true,
+                utmSource: true,
+                utmMedium: true,
+                utmCampaign: true,
+                gclid: true,
+                device: true,
+                searchTerm: true,
+                createdAt: true,
+              },
+            },
+          },
+        },
+        assignments: { select: { status: true, agency: { select: { name: true } } }, orderBy: { createdAt: "asc" } },
       },
     }),
     elenchi(),
@@ -124,8 +135,9 @@ export async function GET(req: Request) {
           ]
             .filter(Boolean)
             .join(" · ") || undefined,
-        stato: l.status,
+        stato: STATO_RICHIESTA[l.status] ?? l.status,
         link: `${BASE_URL}/admin/lead/${l.id}/`,
+        campi: campiRichiesta(l),
       })),
       extra: { schede_pubblicate: schede },
       elenchi: liste.ok,

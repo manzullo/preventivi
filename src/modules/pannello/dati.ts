@@ -12,6 +12,7 @@ import { db } from "@/lib/db";
 import { BASE_URL } from "@/lib/site";
 import { esegui } from "@/modules/analisi/motore";
 import { FAMIGLIE } from "@/modules/directory/sorgenti";
+import { type Campi, campiDa, provenienza, risposte } from "@/modules/pannello/campi";
 
 const VOCI = 50;
 const RIGHE = 50;
@@ -24,6 +25,7 @@ type Voce = {
   dettaglio?: string;
   stato?: string;
   link?: string;
+  campi?: Campi;
 };
 export type Elenco = { chiave: string; titolo: string; totale?: number; da_gestire?: number; voci: Voce[] };
 type Valore = { nome: string; valore: number | string; nota?: string };
@@ -45,6 +47,48 @@ const STATO_RIVENDICAZIONE: Record<string, string> = {
   approved: "approvata",
   rejected: "respinta",
 };
+const STATO_ASSEGNAZIONE: Record<string, string> = {
+  offered: "proposta",
+  proposed: "proposta",
+  sent: "inviata",
+  accepted: "candidata",
+  declined: "non interessata",
+  closed: "chiusa",
+};
+
+/** Gli stati dei preventivi come in admin, con "nuova" che il pannello evidenzia. */
+export const STATO_RICHIESTA: Record<string, string> = { new: "nuova", qualified: "qualificata", sold: "venduta", rejected: "scartata" };
+
+/** La riga senza le relazioni, che si aggiungono a mano con un nome chiaro. */
+function senza<T extends object>(riga: T, ...chiavi: string[]): Record<string, unknown> {
+  return Object.fromEntries(Object.entries(riga).filter(([k]) => !chiavi.includes(k)));
+}
+
+type RichiestaCompleta = Record<string, unknown> & {
+  status: string;
+  gclid: string | null;
+  service: { plural: string } | null;
+  city: { name: string } | null;
+  agency: { name: string } | null;
+  form: { name: string } | null;
+  submission: { answers: unknown; contact: unknown; visit: Parameters<typeof provenienza>[0] } | null;
+  assignments: { status: string; agency: { name: string } }[];
+};
+
+/** Tutto quello che si sa di un preventivo, per aprirlo con un clic nel pannello. */
+export function campiRichiesta(l: RichiestaCompleta): Campi {
+  return campiDa(senza(l, "service", "city", "agency", "form", "submission", "assignments"), {
+    stato: STATO_RICHIESTA[l.status] ?? l.status,
+    servizio: l.service?.plural,
+    citta: l.city?.name,
+    professionista_scelto_dal_cliente: l.agency?.name,
+    modulo: l.form?.name,
+    ...risposte(l.submission?.answers),
+    ...provenienza(l.submission?.visit ?? null, l.gclid),
+    professionisti_a_cui_e_andata: l.assignments.map((a) => `${a.agency.name} (${STATO_ASSEGNAZIONE[a.status] ?? a.status})`),
+  });
+}
+
 async function candidature(): Promise<Elenco> {
   const [totale, daGestire, righe] = await Promise.all([
     db.application.count(),
@@ -64,6 +108,7 @@ async function candidature(): Promise<Elenco> {
       dettaglio: unisci(a.citySlug, a.website, breve(a.message)),
       stato: STATO_CANDIDATURA[a.status] ?? a.status,
       link: admin(`candidature/?stato=${a.status}`),
+      campi: campiDa(a, { stato: STATO_CANDIDATURA[a.status] ?? a.status }),
     })),
   };
 }
@@ -91,6 +136,11 @@ async function rivendicazioni(): Promise<Elenco> {
       dettaglio: unisci(r.agency.city?.name, r.role),
       stato: STATO_RIVENDICAZIONE[r.status] ?? r.status,
       link: admin("rivendicazioni/"),
+      campi: campiDa(senza(r, "agency"), {
+        scheda: r.agency.name,
+        citta: r.agency.city?.name,
+        stato: STATO_RIVENDICAZIONE[r.status] ?? r.status,
+      }),
     })),
   };
 }
@@ -121,6 +171,12 @@ async function candidatureAlleRichieste(): Promise<Elenco> {
       dettaglio: unisci(a.lead.service?.plural, a.lead.city?.name, a.price != null && `${a.price} €`),
       stato: a.status === "accepted" ? "candidata" : "non interessata",
       link: admin(`lead/${a.leadId}/`),
+      campi: campiDa(senza(a, "agency", "lead"), {
+        professionista: a.agency.name,
+        servizio: a.lead.service?.plural,
+        citta: a.lead.city?.name,
+        stato: STATO_ASSEGNAZIONE[a.status] ?? a.status,
+      }),
     })),
   };
 }
