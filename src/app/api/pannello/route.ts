@@ -8,6 +8,8 @@
 // descritto in docs/CONTRATTO-SITI.md del repository del pannello.
 //
 //   GET /api/pannello/   con  Authorization: Bearer <PANNELLO_TOKEN>
+//   GET /api/pannello/?elenco=richieste&prima_di=<data>&quante=200
+//       lo storico di un elenco, dal più nuovo, per vedere tutte le voci
 //
 // Solo lettura. Senza la chiave giusta risponde 401 e basta; se la chiave non
 // è impostata nel .env l'indirizzo resta spento. Le visite di chi gestisce il
@@ -15,8 +17,7 @@
 import { timingSafeEqual } from "node:crypto";
 import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { BASE_URL } from "@/lib/site";
-import { STATO_RICHIESTA, analisi, campiRichiesta, elenchi } from "@/modules/pannello/dati";
+import { analisi, elenchi, paginaDiElenco, richieste as ultimeRichieste } from "@/modules/pannello/dati";
 
 export const dynamic = "force-dynamic";
 
@@ -40,6 +41,20 @@ export async function GET(req: Request) {
     return new NextResponse(null, { status: 401 });
   }
 
+  // Lo storico completo di un elenco, una pagina alla volta.
+  const parametri = new URL(req.url).searchParams;
+  const elenco = parametri.get("elenco");
+  if (elenco) {
+    const prima = parametri.get("prima_di") ? new Date(parametri.get("prima_di")!) : undefined;
+    if (prima && Number.isNaN(prima.getTime())) {
+      return NextResponse.json({ errore: "prima_di non è una data" }, { status: 400 });
+    }
+    const quante = Math.min(500, Math.max(1, Number(parametri.get("quante")) || 200));
+    const pagina = await paginaDiElenco(elenco, prima, quante);
+    if (!pagina) return NextResponse.json({ errore: `Elenco sconosciuto: ${elenco}` }, { status: 404 });
+    return NextResponse.json(pagina, { headers: { "Cache-Control": "no-store" } });
+  }
+
   const ora = new Date();
   // Un giorno in più del necessario: il filtro fine sul giorno italiano lo fa
   // il raggruppamento, qui basta non perdere la mezzanotte.
@@ -58,36 +73,7 @@ export async function GET(req: Request) {
       GROUP BY g`,
     db.lead.count({ where: { status: "new" } }),
     db.agency.count({ where: { published: true } }),
-    db.lead.findMany({
-      orderBy: { createdAt: "desc" },
-      take: 20,
-      include: {
-        service: { select: { plural: true } },
-        city: { select: { name: true } },
-        agency: { select: { name: true } },
-        form: { select: { name: true } },
-        submission: {
-          select: {
-            answers: true,
-            contact: true,
-            visit: {
-              select: {
-                landingPath: true,
-                referrer: true,
-                utmSource: true,
-                utmMedium: true,
-                utmCampaign: true,
-                gclid: true,
-                device: true,
-                searchTerm: true,
-                createdAt: true,
-              },
-            },
-          },
-        },
-        assignments: { select: { status: true, agency: { select: { name: true } } }, orderBy: { createdAt: "asc" } },
-      },
-    }),
+    ultimeRichieste(undefined, 20),
     elenchi(),
     analisi(),
   ]);
@@ -100,8 +86,7 @@ export async function GET(req: Request) {
     const giorno = giornoItaliano(new Date(ora.getTime() - (GIORNI - 1 - i) * 864e5));
     return { giorno, visite: visite.get(giorno) ?? 0, richieste: richieste.get(giorno) ?? 0 };
   });
-  const somma = (quanti: number, campo: "visite" | "richieste") =>
-    perGiorno.slice(-quanti).reduce((t, g) => t + g[campo], 0);
+  const somma = (quanti: number, campo: "visite" | "richieste") => perGiorno.slice(-quanti).reduce((t, g) => t + g[campo], 0);
   const oggi = perGiorno[GIORNI - 1];
   const ieri = perGiorno[GIORNI - 2];
 
@@ -119,26 +104,7 @@ export async function GET(req: Request) {
         da_gestire: daGestire,
       },
       per_giorno: perGiorno,
-      ultime_richieste: ultime.map((l) => ({
-        id: l.id,
-        quando: l.createdAt.toISOString(),
-        tipo: l.service?.plural ?? undefined,
-        nome: [l.name, l.company].filter(Boolean).join(" · ") || undefined,
-        contatto: l.email ?? l.phone ?? undefined,
-        riassunto:
-          [
-            l.city?.name,
-            l.agency ? `per ${l.agency.name}` : null,
-            l.budget,
-            l.timing,
-            l.description?.slice(0, 200),
-          ]
-            .filter(Boolean)
-            .join(" · ") || undefined,
-        stato: STATO_RICHIESTA[l.status] ?? l.status,
-        link: `${BASE_URL}/admin/lead/${l.id}/`,
-        campi: campiRichiesta(l),
-      })),
+      ultime_richieste: ultime,
       extra: { schede_pubblicate: schede },
       elenchi: liste.ok,
       analisi: [

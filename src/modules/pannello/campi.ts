@@ -81,7 +81,14 @@ const NOMI: Record<string, string> = {
 const nomeCampo = (k: string) => NOMI[k] ?? k.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toLowerCase();
 
 export const dataItaliana = (d: Date) =>
-  d.toLocaleString("it-IT", { timeZone: FUSO, day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+  d.toLocaleString("it-IT", {
+    timeZone: FUSO,
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 
 /** Un valore qualsiasi del database come testo o numero leggibile; null se vuoto. */
 export function leggibile(v: unknown): string | number | null {
@@ -142,7 +149,6 @@ export function provenienza(visita: Visita, gclid?: string | null): Record<strin
   if (!visita) return gclid ? { provenienza: "Google Ads" } : {};
   return {
     provenienza: classificaSorgente(visita).nome,
-    pagina_di_atterraggio: visita.landingPath,
     arrivata_da: visita.referrer,
     parola_cercata: visita.searchTerm,
     dispositivo_visita: visita.device,
