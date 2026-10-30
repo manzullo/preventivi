@@ -1,0 +1,375 @@
+// Directory: le pagine nascono incrociando Service x City, come guidalocation
+// incrocia evento x città x zona. L'ordine è `score`, calcolato solo dalle
+// recensioni: nessun pagamento lo tocca. Chi paga compra visibilità, non
+// merito: entra in una corsia davanti all'elenco, con una priorità che è un
+// numero. Zero, che è il valore di tutte, vuol dire nessuna priorità; più il
+// numero è alto più la scheda sta in alto. Vale ovunque (Agency.priority) o su
+// una singola pagina servizio x città (Placement.priority). A parità di numero
+// decidono le recensioni. Ogni scheda in quella corsia porta in pagina
+// l'etichetta che lo dichiara.
+
+model Agency {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  legalName   String?
+  website     String?
+  domain      String?  // dominio normalizzato, per la deduplica cross-fonte
+  phone       String?
+  email       String?
+  vatNumber   String?  // partita IVA letta dal sito dell'agenzia
+  // Sedi in più della stessa azienda: [{via, cap, citta, lat, lng, placeId, telefono}].
+  locations   Json?
+  whatsapp    String?  // numero internazionale senza +, per il bottone wa.me
+
+  street      String?
+  postalCode  String?
+  lat         Float?
+  lng         Float?
+
+  cityId      String?
+  city        City?    @relation(fields: [cityId], references: [id])
+
+  description String?
+  // Testo grezzo della fonte (Sortlist, Pick an Agency, Google): non si pubblica, serve da base per la riscrittura.
+  sourceDescription String?
+  foundedYear Int?
+  teamSize    String?  // "1-10", "11-50", "51-200", "200+"
+  minBudget   Int?     // euro
+
+  // SEO e contenuti della scheda (opzionali: se vuoti valgono i template).
+  metaTitle       String?
+  metaDescription String?
+  faq             Json?    // [{ q, a }] domande custom, sommate a quelle automatiche
+  // Etichette dalle fonti che non sono servizi: settori serviti e piattaforme
+  // (es. Shopify, HubSpot). Si conservano per filtri futuri e per non perdere dati.
+  industries      Json?    // ["Fashion", "Food & Beverage"]
+  platforms       Json?    // ["Shopify", "HubSpot"]
+  // Competenze in chiaro (più fini dei servizi), dedotte dalle fonti e dal sito:
+  // ["Google Ads", "Shopify", "Link building"]. Filtri e chip in scheda.
+  skills          Json?
+  // Logo (URL della fonte finché non lo scarichiamo) e profili social.
+  logoUrl         String?
+  // Google Business Profile (via Apify): place_id per aggiornare rating e recensioni.
+  googlePlaceId   String?  @unique
+  googleUrl       String?
+  googleSyncedAt  DateTime?
+  social          Json?    // { instagram, linkedin, facebook }
+  publishedAt     DateTime? // prima pubblicazione: alimenta "Appena arrivate"
+
+  // Rating aggregati di fonti esterne con licenza o accordo (Pick an Agency,
+  // Sortlist dopo il PDF, Google): [{ source, rating, count, url, fetchedAt }].
+  // Entrano nel punteggio insieme alle recensioni singole, sempre con fonte.
+  externalRatings Json?
+
+  // Segnale di ranking: deriva da Review, mai da pagamenti.
+  rating      Float?   // media 1-5
+  reviewCount Int      @default(0)
+  score       Float    @default(0)
+  scoredAt    DateTime?
+
+  // Priorità decisa da noi, valida su tutto il sito. 0 = nessuna, ed è il caso
+  // di quasi tutte; più alto è il numero più la scheda sta in alto. Non tocca
+  // il punteggio, sposta solo la posizione.
+  priority     Int     @default(0)
+
+  // Provenienza: ogni scheda sa da dove viene.
+  source      String   @default("manual") // manual | google_places | csv | application | cernita
+  importNote  String?  // note dell'import (sede da verificare, etichette generiche): solo admin
+  sourceRef   String?  // place_id per Google Places
+  sourceUrl   String?
+
+  claimed     Boolean  @default(false)
+  claimedAt   DateTime?
+  verified    Boolean  @default(false) // dominio verificato dal titolare
+  published   Boolean  @default(false)
+  // Il titolare ha chiesto di togliere la scheda (opposizione GDPR art. 21):
+  // la riga resta solo come promemoria con nome e place_id, così un nuovo
+  // import la riconosce e non la ripubblica. I dati di contatto si svuotano.
+  optedOutAt  DateTime?
+
+  services    AgencyService[]
+  reviews     Review[]
+  photos      Photo[]
+  leads       Lead[]
+  claims      AgencyClaim[]
+  application Application?
+  assignments LeadAssignment[]
+  snapshots   SourceSnapshot[]
+  ownerLogins OwnerLogin[]
+  placements  Placement[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([source, sourceRef])
+  @@index([cityId, published])
+  @@index([domain])
+  @@index([score])
+  @@index([priority])
+}
+
+/// Posizione decisa a mano su una pagina precisa: tutte le agenzie di un
+/// servizio, tutte quelle di una città, o l'incrocio dei due. Senza servizio e
+/// senza città vale ovunque. Le date rendono la spinta a tempo: fuori
+/// dall'intervallo la riga smette di contare da sola.
+model Placement {
+  id        String    @id @default(cuid())
+  agencyId  String
+  agency    Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  serviceId String?
+  service   Service?  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  cityId    String?
+  city      City?     @relation(fields: [cityId], references: [id], onDelete: Cascade)
+  priority  Int       @default(10) // più alto sta più in alto; 0 = nessuna spinta
+  label     String? // etichetta mostrata, se diversa da "In evidenza"
+  note      String? // perché: contratto, prova, scambio
+  startsAt  DateTime?
+  endsAt    DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([serviceId, cityId, priority])
+  @@index([agencyId])
+}
+
+model Service {
+  id       String  @id @default(cuid())
+  slug     String  @unique // "idraulici"
+  name     String          // "Idraulico": il servizio come lo chiede il cliente
+  plural   String          // "Idraulici": H1 e title ("Idraulici a Roma")
+  // Singolare e genere di chi lo fa, per scrivere frasi giuste: "un idraulico",
+  // "l'elettricista", "un'estetista". Senza singolare si scrive "un professionista".
+  singular String?         // "idraulico"
+  gender   String  @default("m") // m | f
+  // Macro area come su ProntoPro (Casa, Eventi, Benessere, Lezioni, Aziende):
+  // raggruppa la home e il menu, non crea indirizzi.
+  group    String?
+  // Regex sulle categorie Google Maps che appartengono a questo servizio: la
+  // scoperta scarta i posti che non c'entrano (omonimi, negozi, ecc.).
+  googleMatch String?
+  intro    String?         // testo editoriale della pagina servizio
+  queries  Json            // ["idraulico", "pronto intervento idraulico"]: query per Google Maps
+  position Int     @default(0)
+  active   Boolean @default(true)
+
+  agencies AgencyService[]
+  pages    LandingPage[]
+  leads    Lead[]
+  placements Placement[]
+  aliases  ServiceAlias[]
+}
+
+/// Modi diversi di chiedere lo stesso servizio: "pubblicità su ChatGPT" è
+/// quello che scrive la gente, "Agenzie LLM marketing" è come lo chiamiamo noi.
+/// Un alias vale sempre nella ricerca del sito. Diventa una pagina sua solo se
+/// gli si scrive un testo proprio: senza, sarebbe la fotocopia della pagina del
+/// servizio, e le fotocopie i motori di ricerca le buttano via. Un indirizzo di
+/// alias non pubblicato rimanda al servizio.
+model ServiceAlias {
+  id        String   @id @default(cuid())
+  serviceId String
+  service   Service  @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  slug      String   @unique
+  label     String // "Pubblicità su ChatGPT": come lo chiede il cliente
+  // Come si chiamano le agenzie che lo fanno: "Agenzie pubblicità ChatGPT".
+  // Serve alle frasi del testo e alle domande, che con la sola label
+  // verrebbero sgrammaticate ("quante pubblicità su chatgpt ci sono a Roma").
+  agencyLabel String?
+  // Altri modi di dire la stessa cosa, uno per riga. Non creano indirizzi:
+  // finiscono nel testo della pagina, che è dove Google li legge.
+  variants  Json     @default("[]")
+  intro     String? // il testo proprio: senza questo non si pubblica
+  published Boolean  @default(false)
+  position  Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([serviceId, published])
+}
+
+model AgencyService {
+  agencyId  String
+  serviceId String
+  weight    Float  @default(1) // quanto quel servizio pesa per quell'agenzia
+
+  agency  Agency  @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+
+  @@id([agencyId, serviceId])
+  @@index([serviceId])
+}
+
+model Region {
+  id     String @id @default(cuid())
+  slug   String @unique // "lazio"
+  name   String
+  cities City[]
+}
+
+model City {
+  id          String  @id @default(cuid())
+  slug        String  @unique // "roma"
+  name        String
+  province    String  // sigla: "RM"
+  regionId    String?
+  region      Region? @relation(fields: [regionId], references: [id])
+  lat         Float?
+  lng         Float?
+  population  Int?
+  isCapital   Boolean @default(false) // capoluogo di provincia
+  // slug del capoluogo della provincia, per raggruppare i comuni minori
+  capitalSlug String?
+
+  agencies Agency[]
+  pages    LandingPage[]
+  leads    Lead[]
+  placements Placement[]
+
+  @@index([regionId])
+  @@index([capitalSlug])
+  @@index([isCapital])
+}
+
+// ---------- Segnale ----------
+
+model Review {
+  id          String    @id @default(cuid())
+  agencyId    String
+  agency      Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+
+  author      String?
+  rating      Int
+  text        String?
+  publishedAt DateTime?
+
+  // Attribuzione obbligatoria: nessuna recensione senza fonte dichiarata.
+  source      String    // "google" | "buyer_form"
+  sourceUrl   String?
+  sourceRef   String?   @unique
+  // Tutto il resto che la fonte dà: link profilo autore, foto, risposta del titolare, lingua, like.
+  meta        Json?
+
+  createdAt   DateTime  @default(now())
+
+  @@index([agencyId])
+}
+
+// Copia integrale del dato grezzo di ogni fonte per agenzia (Google, Sortlist,
+// Pick an Agency, sito): niente va perso, si può rielaborare senza rileggere.
+model SourceSnapshot {
+  id        String   @id @default(cuid())
+  agencyId  String
+  agency    Agency   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  source    String   // google | sortlist | pickanagency | sito
+  ref       String?  // place_id, slug, dominio
+  data      Json
+  fetchedAt DateTime @default(now())
+
+  @@unique([agencyId, source])
+  @@index([source, ref])
+}
+
+model Photo {
+  id       String @id @default(cuid())
+  agencyId String
+  agency   Agency @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  url      String
+  width    Int?
+  height   Int?
+  position Int    @default(0)
+
+  @@index([agencyId])
+}
+
+// ---------- Pagine generate ----------
+
+model LandingPage {
+  id           String  @id @default(cuid())
+  path         String  @unique // "/agenzie-seo/roma/"
+  kind         String  // service | city | region | service_city | comparison | alternative
+
+  serviceId    String?
+  service      Service?    @relation(fields: [serviceId], references: [id])
+  cityId       String?
+  city         City?       @relation(fields: [cityId], references: [id])
+  competitorId String?
+  competitor   Competitor? @relation(fields: [competitorId], references: [id])
+
+  title       String
+  description String?
+  intro       String?
+
+  metaTitle       String?  // override del title automatico
+  metaDescription String?
+
+  resultCount Int      @default(0) // sotto soglia la pagina non si pubblica
+  published   Boolean  @default(false)
+  updatedAt   DateTime @updatedAt
+
+  @@index([kind, published])
+}
+
+// Concorrenti citati nelle pagine "alternative a"
+model Competitor {
+  id       String  @id @default(cuid())
+  slug     String  @unique // "sortlist"
+  name     String
+  website  String
+  summary  String?
+  position Int     @default(0)
+  pages    LandingPage[]
+}
+
+// ---------- Candidature e rivendicazioni ----------
+
+model Application {
+  id         String    @id @default(cuid())
+  name       String
+  website    String?
+  email      String
+  phone      String?
+  citySlug   String?
+  services   Json      // slug dei servizi dichiarati
+  message    String?
+  status     String    @default("pending") // pending | accepted | rejected
+  reviewedAt DateTime?
+  agencyId   String?   @unique
+  agency     Agency?   @relation(fields: [agencyId], references: [id])
+  createdAt  DateTime  @default(now())
+
+  @@index([status])
+}
+
+// Accesso all'area titolari: link con token via email, niente password.
+model OwnerLogin {
+  id        String    @id @default(cuid())
+  agencyId  String
+  agency    Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  email     String
+  token     String    @unique
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([agencyId])
+}
+
+model AgencyClaim {
+  id         String    @id @default(cuid())
+  agencyId   String
+  agency     Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  email      String    // deve essere sul dominio dell'agenzia
+  token      String    @unique
+  // pending: email da confermare · email_ok: indirizzo confermato, aspetta noi
+  // approved: verificata da una persona · rejected: respinta
+  status     String    @default("pending")
+  role       String?   // ruolo dichiarato da chi rivendica
+  phone      String?   // numero per la verifica a voce
+  note       String?   // nota nostra sulla verifica
+  verifiedAt DateTime?
+  approvedAt DateTime?
+  approvedBy String?
+  createdAt  DateTime  @default(now())
+
+  @@index([agencyId])
+}

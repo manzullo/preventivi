@@ -1,0 +1,56 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files (can opt-in for committing if needed)
+.env*
+# il modello invece si versiona: dice quali variabili servono, senza valori
+!.env.example
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# locale
+.env
+*.db
+*.db-journal
+src/generated/
+
+# dump grezzi delle fonti (123 MB): si rigenerano, e il deploy li esclude già
+/data/raw/
+
+# stato locale degli agenti, non è codice del progetto
+/.claude-flow/
+/.claude/worktrees/

@@ -1,0 +1,25 @@
+{
+  "source": "instapro",
+  "start": "https://www.instapro.it/{categoria}/{citta}",
+  "categorie": {
+    "idraulici": "riscaldamento/ditta-termoidraulica-professionisti",
+    "termoidraulici": ["riscaldamento/ditta-termoidraulica-professionisti", "climatizzazione/tecnico-caldaia-professionisti", "climatizzazione/installatori-condizionatori-professionisti"],
+    "elettricisti": ["elettricita/elettricista-professionisti", "elettricita/antennista-professionisti", "allarmi-sicurezza/antifurti-e-videosorveglianza-professionisti"],
+    "imbianchini": ["tinteggiatura/imbianchino-professionisti", "costruzione-ristrutturazione-casa/rifacimento-facciata-professionisti"],
+    "imprese-edili": ["costruzione-ristrutturazione-casa/impresa-edile-professionisti", "demolizioni-rimozioni/demolizioni-professionisti", "isolamento/ditta-isolamento-professionisti", "cartongesso/cartongessista-professionisti", "tetto-coperture/riparazione-tetti-professionisti", "costruzione-ristrutturazione-casa/lattoniere-professionisti", "bagni-sanitari/specialista-bagni-professionisti", "servizi-tuttofare/tuttofare-professionisti"],
+    "muratori": "costruzione-ristrutturazione-casa/muratore-professionisti",
+    "piastrellisti": ["pavimenti-piastrelle/piastrellista-professionisti", "pavimenti-piastrelle/parquettista-professionisti", "pavimenti-piastrelle/pavimentazione-professionisti"],
+    "falegnami": ["falegnameria/falegname-professionisti", "cucina/specialista-cucine-professionisti", "tappezzeria/tappezziere-professionisti"],
+    "fabbri": "costruzione-ristrutturazione-casa/fabbro-professionisti",
+    "serramentisti": "porte-finestre/installatore-infissi-professionisti",
+    "giardinieri": "giardinaggio-esterni/giardiniere-professionisti",
+    "imprese-di-pulizie": "servizi-pulizia/impresa-di-pulizie-professionisti",
+    "traslocatori": "traslochi/ditta-traslochi-professionisti",
+    "tecnici-elettrodomestici": "elettricita/tecnico-elettrodomestici-professionisti"
+  },
+  "scheda": "^https://www\\.instapro\\.it/ditta/[a-z0-9-]+$",
+  "successiva": "^https://www\\.instapro\\.it/[a-z-]+/[a-z-]+-professionisti/[a-z-]+\\?internalNavigation=true&page=\\d+$",
+  "maxPagine": 10,
+  "pausaMs": 3000,
+  "estrattore": "instapro"
+}

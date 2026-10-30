@@ -1,0 +1,258 @@
+@import "tailwindcss";
+
+/* Token derivati da Fondamenta v2 (Tabbble): una sola famiglia (Onest), un
+   solo colore d'azione (blu), raggi 999/24/14/28. Il rosso resta al marchio.
+   Dai concorrenti: pillola con freccia, secondaria a contorno, kicker
+   maiuscolo, stato vuoto tratteggiato. */
+@theme {
+  --font-sans: var(--font-onest), ui-sans-serif, system-ui, sans-serif;
+
+  --color-action: #0b57d0;
+  --color-action-hover: #0842a0;
+  --color-tonal: #e8f0fe;
+  --color-ink: #1c1b1f;
+  --color-ink-2: #5f5e64;
+  --color-ink-3: #8b8a91;
+  --color-line: #e4e4e8;
+  --color-surface: #f5f6f8;
+  --color-canvas: #ffffff;
+  --color-ok: #1e8e3e;
+  --color-ok-soft: #e6f4ea;
+  --color-star: #ffc531;
+  --color-warn: #fef7e0;
+  --color-warn-fg: #b06000;
+  --color-brand: #da3327;
+
+  --radius-pill: 999px;
+  --radius-slot: 14px;
+  --radius-card: 24px;
+  --radius-panel: 28px;
+
+  --shadow-soft: 0 2px 10px rgb(11 87 208 / 0.28);
+  --shadow-card: 0 1px 2px rgb(28 27 31 / 0.04), 0 8px 24px rgb(28 27 31 / 0.06);
+}
+
+html {
+  color-scheme: light;
+  scroll-behavior: smooth;
+  /* Lo spazio della barra di scorrimento resta sempre prenotato: senza,
+     passando da una pagina lunga a una corta il contenuto salta di lato. */
+  scrollbar-gutter: stable;
+}
+
+html,
+body {
+  /* La pagina non si sposta di lato: "overscroll-behavior-x" spegne il
+     trascinamento elastico del trackpad e il gesto che torna indietro.
+     Niente overflow-x qui dentro: con "clip" su un asse il browser porta a
+     clip anche l'altro, e la pagina smette di scorrere in verticale. Quel che
+     sfora si taglia dove nasce, non sulla radice del documento. */
+  overscroll-behavior-x: none;
+  max-width: 100%;
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scala tipografica Onest: display 800 → corpo 400, mai sotto 13px. */
+.t-display {
+  font-size: clamp(2.25rem, 5vw, 3.375rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.05;
+}
+.t-h1 {
+  font-size: clamp(1.75rem, 3.6vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.t-h2 {
+  font-size: clamp(1.5rem, 3vw, 1.75rem);
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+}
+.t-title {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  line-height: 1.3;
+}
+.t-lead {
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--color-ink-2);
+}
+.t-body {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+}
+.t-meta {
+  font-size: 0.84375rem;
+  font-weight: 500;
+  color: var(--color-ink-2);
+}
+.t-kicker {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-ink-3);
+}
+
+/* Testi lunghi (metodologia, schede, pagine statiche). */
+.prose-basic > * + * {
+  margin-top: 0.9em;
+}
+.prose-basic h2 {
+  margin-top: 1.8em;
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.prose-basic h3 {
+  margin-top: 1.4em;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+.prose-basic ol {
+  padding-left: 1.2em;
+  list-style: decimal;
+}
+.prose-basic blockquote {
+  border-left: 3px solid var(--color-line);
+  padding-left: 1em;
+  color: var(--color-ink-2);
+}
+/* Verdetto in apertura: la risposta secca prima dell'articolo. */
+.prose-basic > div:first-child > blockquote:first-child {
+  border-left: 0;
+  border-radius: var(--radius-card, 14px);
+  background: var(--color-surface);
+  padding: 1.25rem 1.5rem;
+  color: var(--color-ink);
+  font-weight: 500;
+}
+.prose-basic ul {
+  padding-left: 1.2em;
+  list-style: disc;
+}
+/* Solo i link scritti nel testo: quelli dei componenti (bottoni, card, tabelle)
+   portano già le loro classi e non vanno ricolorati, altrimenti il testo del
+   bottone diventa blu su blu. */
+.prose-basic a:not([class]) {
+  color: var(--color-action);
+  font-weight: 600;
+}
+.prose-basic code {
+  font-size: 0.9em;
+  background: var(--color-surface);
+  padding: 0.1em 0.4em;
+  border-radius: 6px;
+}
+
+/* Transizione fra gli step del form. */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+
+/* Fascia in cima agli elenchi. La faccia arriva o dal pannello, e allora è
+   scritta su data-hero-fisso già dal server, oppure dal confronto a caso, che
+   la scrive su data-hero dell'html prima del disegno. Le regole valgono per
+   tutte e due le strade. */
+.hero-band {
+  background: var(--color-surface);
+  border-radius: var(--radius-panel);
+}
+
+/* Scura: fondo nero, e l'unica cosa chiara è il bottone. */
+html[data-hero="dark"] .hero-band,
+.hero-band[data-hero-fisso="dark"] {
+  background: var(--color-ink);
+  color: #fff;
+}
+html[data-hero="dark"] .hero-band .hero-kicker,
+html[data-hero="dark"] .hero-band .hero-sub,
+html[data-hero="dark"] .hero-band .hero-micro,
+.hero-band[data-hero-fisso="dark"] .hero-kicker,
+.hero-band[data-hero-fisso="dark"] .hero-sub,
+.hero-band[data-hero-fisso="dark"] .hero-micro {
+  color: rgb(255 255 255 / 0.72);
+}
+html[data-hero="dark"] .hero-band .hero-title,
+.hero-band[data-hero-fisso="dark"] .hero-title {
+  color: #fff;
+}
+html[data-hero="dark"] .hero-band .hero-cta,
+.hero-band[data-hero-fisso="dark"] .hero-cta {
+  background: #fff;
+  color: var(--color-ink);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.35);
+}
+html[data-hero="dark"] .hero-band .hero-cta:hover,
+.hero-band[data-hero-fisso="dark"] .hero-cta:hover {
+  background: #f1f2f4;
+}
+
+/* Blu piena: il colore del marchio riempie la fascia, bottone bianco. */
+.hero-band[data-hero-fisso="action"] {
+  background: var(--color-action);
+  color: #fff;
+}
+.hero-band[data-hero-fisso="action"] .hero-title {
+  color: #fff;
+}
+.hero-band[data-hero-fisso="action"] .hero-kicker,
+.hero-band[data-hero-fisso="action"] .hero-sub,
+.hero-band[data-hero-fisso="action"] .hero-micro {
+  color: rgb(255 255 255 / 0.8);
+}
+.hero-band[data-hero-fisso="action"] .hero-cta {
+  background: #fff;
+  color: var(--color-action);
+  box-shadow: 0 2px 10px rgb(0 0 0 / 0.25);
+}
+.hero-band[data-hero-fisso="action"] .hero-cta:hover {
+  background: #eef2fb;
+}
+
+/* Senza fascia: niente fondo colorato, solo il testo sulla pagina. */
+.hero-band[data-hero-fisso="plain"] {
+  background: transparent;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* Spazio per la barra CTA fissa su mobile. */
+@media (max-width: 767px) {
+  body:has([data-sticky-cta]) {
+    padding-bottom: 68px;
+  }
+}
+
+/* Tabelle negli articoli: scorrono da sole sui telefoni. */
+.prose-basic .tabella {
+  overflow-x: auto;
+  margin: 1.4em 0;
+}
+.prose-basic table {
+  width: 100%;
+  min-width: 30rem;
+  border-collapse: collapse;
+  text-align: left;
+}
+.prose-basic th,
+.prose-basic td {
+  border-bottom: 1px solid var(--color-line);
+  padding: 0.6rem 0.75rem;
+  vertical-align: top;
+}
+.prose-basic th {
+  font-weight: 600;
+  color: var(--color-ink);
+}

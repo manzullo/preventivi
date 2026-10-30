@@ -1,0 +1,5 @@
+[
+  { "placeId": "ChIJ-fixture-001", "title": "Studio Esempio SEO", "website": "https://www.studio-esempio.example", "phone": "+39 06 0000001", "street": "Via di Prova 1", "postalCode": "00100", "city": "Roma", "url": "https://maps.google.com/?cid=1", "location": { "lat": 41.9, "lng": 12.5 }, "totalScore": 4.6, "reviewsCount": 2, "reviews": [ { "reviewId": "r1", "name": "Cliente A", "stars": 5, "text": "Ottimi", "publishedAtDate": "2026-05-01T10:00:00.000Z", "reviewUrl": "https://maps.google.com/r1" }, { "reviewId": "r2", "name": "Cliente B", "stars": 4, "text": "Bene", "publishedAtDate": "2026-03-01T10:00:00.000Z" } ] },
+  { "placeId": "ChIJ-fixture-002", "title": "Agenzia Prova Digital", "website": "http://agenziaprova.example", "city": "Roma", "location": { "lat": 41.89, "lng": 12.48 }, "reviews": [] },
+  { "title": "Senza place id: scartata" }
+]

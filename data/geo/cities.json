@@ -1,0 +1,1152 @@
+[
+ {
+  "id": "cmp883yqe00040tlowpfks4ej",
+  "slug": "roma",
+  "name": "Roma",
+  "province": "RM",
+  "latitude": 41.9028,
+  "longitude": 12.4964,
+  "order": 1,
+  "region_id": "cmp883ylf00000tlo4fzbla0y"
+ },
+ {
+  "id": "cmp883yr200050tloys8ffir4",
+  "slug": "milano",
+  "name": "Milano",
+  "province": "MI",
+  "latitude": 45.4642,
+  "longitude": 9.19,
+  "order": 2,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "cmp883yrv00070tloi6jtr9r3",
+  "slug": "napoli",
+  "name": "Napoli",
+  "province": "NA",
+  "latitude": 40.8518,
+  "longitude": 14.2681,
+  "order": 3,
+  "region_id": "cmp883ylw00030tlolvuj4tg3"
+ },
+ {
+  "id": "becbe890-adbb-4b7c-a144-06cc3615fc48",
+  "slug": "salerno",
+  "name": "Salerno",
+  "province": "SA",
+  "latitude": 40.6824,
+  "longitude": 14.7681,
+  "order": 4,
+  "region_id": "cmp883ylw00030tlolvuj4tg3"
+ },
+ {
+  "id": "cmp883yri00060tloro5j0ida",
+  "slug": "firenze",
+  "name": "Firenze",
+  "province": "FI",
+  "latitude": 43.7696,
+  "longitude": 11.2558,
+  "order": 5,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "1eced9a7-e1be-41aa-ab16-39254e67eeef",
+  "slug": "torino",
+  "name": "Torino",
+  "province": "TO",
+  "latitude": 45.0703,
+  "longitude": 7.6869,
+  "order": 6,
+  "region_id": "beb62461-dc9b-447d-b541-2e89f67e1025"
+ },
+ {
+  "id": "feeaf5c4-83ac-4ac5-a64f-b073c5dbc11a",
+  "slug": "caserta",
+  "name": "Caserta",
+  "province": "CE",
+  "latitude": 41.0742,
+  "longitude": 14.3327,
+  "order": 7,
+  "region_id": "cmp883ylw00030tlolvuj4tg3"
+ },
+ {
+  "id": "9e9a9680-4dfd-4619-96bf-dcecf751466f",
+  "slug": "bologna",
+  "name": "Bologna",
+  "province": "BO",
+  "latitude": 44.4949,
+  "longitude": 11.3426,
+  "order": 8,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "b17d61b3-fb3d-4d61-9456-572a453e5d51",
+  "slug": "verona",
+  "name": "Verona",
+  "province": "VR",
+  "latitude": 45.4384,
+  "longitude": 10.9916,
+  "order": 9,
+  "region_id": "cb438696-cddd-46d0-aff2-bab22a72f718"
+ },
+ {
+  "id": "8745489c-0826-4fea-b48b-526d576fde2e",
+  "slug": "latina",
+  "name": "Latina",
+  "province": "LT",
+  "latitude": 41.4677,
+  "longitude": 12.9037,
+  "order": 10,
+  "region_id": "cmp883ylf00000tlo4fzbla0y"
+ },
+ {
+  "id": "cmp883ys800080tlokbt6oknk",
+  "slug": "viterbo",
+  "name": "Viterbo",
+  "province": "VT",
+  "latitude": 42.4207,
+  "longitude": 12.1077,
+  "order": 11,
+  "region_id": "cmp883ylf00000tlo4fzbla0y"
+ },
+ {
+  "id": "c1d40722-a439-4daf-b117-67175d695a22",
+  "slug": "brescia",
+  "name": "Brescia",
+  "province": "BS",
+  "latitude": 45.5416,
+  "longitude": 10.2118,
+  "order": 12,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "83659d51-77e4-4cc1-9bcc-0eeb6b754c29",
+  "slug": "benevento",
+  "name": "Benevento",
+  "province": "BN",
+  "latitude": 41.1297,
+  "longitude": 14.7826,
+  "order": 13,
+  "region_id": "cmp883ylw00030tlolvuj4tg3"
+ },
+ {
+  "id": "4160c319-44e4-4204-9cef-af33868e1c8c",
+  "slug": "monza",
+  "name": "Monza",
+  "province": "MB",
+  "latitude": 45.5845,
+  "longitude": 9.2744,
+  "order": 14,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "03fed216-6a0b-4e4a-a804-a981237f208f",
+  "slug": "bergamo",
+  "name": "Bergamo",
+  "province": "BG",
+  "latitude": 45.6983,
+  "longitude": 9.6773,
+  "order": 15,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "ce01851c-8141-46fb-9a3f-2e7acb07e5be",
+  "slug": "venezia",
+  "name": "Venezia",
+  "province": "VE",
+  "latitude": 45.4408,
+  "longitude": 12.3155,
+  "order": 16,
+  "region_id": "cb438696-cddd-46d0-aff2-bab22a72f718"
+ },
+ {
+  "id": "2c42d542-7e51-4cc4-b129-675022f08ae0",
+  "slug": "avellino",
+  "name": "Avellino",
+  "province": "AV",
+  "latitude": 40.9146,
+  "longitude": 14.7927,
+  "order": 17,
+  "region_id": "cmp883ylw00030tlolvuj4tg3"
+ },
+ {
+  "id": "a0cbc98d-32aa-4932-a76e-319d2943743d",
+  "slug": "frosinone",
+  "name": "Frosinone",
+  "province": "FR",
+  "latitude": 41.6396,
+  "longitude": 13.3517,
+  "order": 18,
+  "region_id": "cmp883ylf00000tlo4fzbla0y"
+ },
+ {
+  "id": "5ebe4a7d-68eb-45bc-9b47-3998af2413a6",
+  "slug": "perugia",
+  "name": "Perugia",
+  "province": "PG",
+  "latitude": 43.1107,
+  "longitude": 12.3908,
+  "order": 19,
+  "region_id": "41a6c353-bb83-4291-a9dc-2409c127dabf"
+ },
+ {
+  "id": "c27c5be9-82f7-46bc-9e9e-63eb405278f4",
+  "slug": "rieti",
+  "name": "Rieti",
+  "province": "RI",
+  "latitude": 42.4043,
+  "longitude": 12.8567,
+  "order": 20,
+  "region_id": "cmp883ylf00000tlo4fzbla0y"
+ },
+ {
+  "id": "2c526462-51c5-48c0-b2f7-407023aca259",
+  "slug": "padova",
+  "name": "Padova",
+  "province": "PD",
+  "latitude": 45.4064,
+  "longitude": 11.8768,
+  "order": 21,
+  "region_id": "cb438696-cddd-46d0-aff2-bab22a72f718"
+ },
+ {
+  "id": "301d83c2-774a-4365-8f2b-da952be7ba9a",
+  "slug": "vicenza",
+  "name": "Vicenza",
+  "province": "VI",
+  "latitude": 45.5455,
+  "longitude": 11.5353,
+  "order": 22,
+  "region_id": "cb438696-cddd-46d0-aff2-bab22a72f718"
+ },
+ {
+  "id": "0cf238b2-c1fa-4369-b7ce-446da8a51244",
+  "slug": "treviso",
+  "name": "Treviso",
+  "province": "TV",
+  "latitude": 45.6669,
+  "longitude": 12.2433,
+  "order": 23,
+  "region_id": "cb438696-cddd-46d0-aff2-bab22a72f718"
+ },
+ {
+  "id": "33e99cf8-b99f-4988-bc16-5e788c2b276d",
+  "slug": "varese",
+  "name": "Varese",
+  "province": "VA",
+  "latitude": 45.8206,
+  "longitude": 8.8251,
+  "order": 24,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "b0fb1bf3-f150-4121-bcec-a662fc593c40",
+  "slug": "catania",
+  "name": "Catania",
+  "province": "CT",
+  "latitude": 37.5079,
+  "longitude": 15.083,
+  "order": 25,
+  "region_id": "bfabd790-07b3-4539-808f-3d65f9824414"
+ },
+ {
+  "id": "eecbff9d-c5cc-4cb4-b2fa-f8d49721c52d",
+  "slug": "lecco",
+  "name": "Lecco",
+  "province": "LC",
+  "latitude": 45.8566,
+  "longitude": 9.3936,
+  "order": 26,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "5cab86eb-4b53-456d-b7d2-d8b31d526aab",
+  "slug": "siena",
+  "name": "Siena",
+  "province": "SI",
+  "latitude": 43.3188,
+  "longitude": 11.3308,
+  "order": 27,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "6870c992-44cc-4fba-b643-3380f21775ee",
+  "slug": "como",
+  "name": "Como",
+  "province": "CO",
+  "latitude": 45.8081,
+  "longitude": 9.0852,
+  "order": 28,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "c113382c-0992-4b65-b43d-815959dc74e6",
+  "slug": "lecce",
+  "name": "Lecce",
+  "province": "LE",
+  "latitude": 40.3515,
+  "longitude": 18.175,
+  "order": 29,
+  "region_id": "1ea3614e-4435-4417-ac88-5e9ad45c78cd"
+ },
+ {
+  "id": "e0b51592-022c-4fec-b591-ee08e17d0473",
+  "slug": "palermo",
+  "name": "Palermo",
+  "province": "PA",
+  "latitude": 38.1157,
+  "longitude": 13.3615,
+  "order": 30,
+  "region_id": "bfabd790-07b3-4539-808f-3d65f9824414"
+ },
+ {
+  "id": "7d4bdb8b-a033-4f45-99e7-6b56b6bbb537",
+  "slug": "pisa",
+  "name": "Pisa",
+  "province": "PI",
+  "latitude": 43.716,
+  "longitude": 10.4017,
+  "order": 31,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "e446da65-4597-4891-bba1-acfd01dded27",
+  "slug": "pavia",
+  "name": "Pavia",
+  "province": "PV",
+  "latitude": 45.1847,
+  "longitude": 9.1582,
+  "order": 32,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "6db25cf7-4357-4968-bcbc-8ed418d5d544",
+  "slug": "rimini",
+  "name": "Rimini",
+  "province": "RN",
+  "latitude": 44.0594,
+  "longitude": 12.5683,
+  "order": 33,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "6baedd38-7a14-4205-891c-7bbefb6c67e8",
+  "slug": "novara",
+  "name": "Novara",
+  "province": "NO",
+  "latitude": 45.4455,
+  "longitude": 8.622,
+  "order": 34,
+  "region_id": "beb62461-dc9b-447d-b541-2e89f67e1025"
+ },
+ {
+  "id": "81d5c14c-941a-4609-a131-495bc4d14740",
+  "slug": "parma",
+  "name": "Parma",
+  "province": "PR",
+  "latitude": 44.8015,
+  "longitude": 10.3279,
+  "order": 35,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "a3879707-e262-4fcc-89c2-3d0f1db89f29",
+  "slug": "piacenza",
+  "name": "Piacenza",
+  "province": "PC",
+  "latitude": 45.0526,
+  "longitude": 9.6929,
+  "order": 36,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "31f5b372-cf30-4c4b-8ef3-f41bd496e2be",
+  "slug": "reggio-emilia",
+  "name": "Reggio Emilia",
+  "province": "RE",
+  "latitude": 44.6983,
+  "longitude": 10.6307,
+  "order": 37,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "0e1c09e0-91c6-4577-9937-8b6ee67de51e",
+  "slug": "terni",
+  "name": "Terni",
+  "province": "TR",
+  "latitude": 42.5634,
+  "longitude": 12.6433,
+  "order": 38,
+  "region_id": "41a6c353-bb83-4291-a9dc-2409c127dabf"
+ },
+ {
+  "id": "b061ddc4-2a00-42f5-9c5c-a7839e93cc23",
+  "slug": "alessandria",
+  "name": "Alessandria",
+  "province": "AL",
+  "latitude": 44.9133,
+  "longitude": 8.6151,
+  "order": 39,
+  "region_id": "beb62461-dc9b-447d-b541-2e89f67e1025"
+ },
+ {
+  "id": "8232519f-6d55-41f6-9505-e7039de0c00e",
+  "slug": "cuneo",
+  "name": "Cuneo",
+  "province": "CN",
+  "latitude": 44.3884,
+  "longitude": 7.5455,
+  "order": 40,
+  "region_id": "beb62461-dc9b-447d-b541-2e89f67e1025"
+ },
+ {
+  "id": "d54beaf2-cce8-418b-99ef-1e362a685de9",
+  "slug": "forli",
+  "name": "Forli",
+  "province": "FC",
+  "latitude": 44.2227,
+  "longitude": 12.0407,
+  "order": 41,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "2dea3b5c-3e62-4853-9321-b9f46cf59755",
+  "slug": "genova",
+  "name": "Genova",
+  "province": "GE",
+  "latitude": 44.4056,
+  "longitude": 8.9463,
+  "order": 42,
+  "region_id": "03e3dd0e-a1aa-4d4b-84af-942c18954112"
+ },
+ {
+  "id": "51767437-9b27-4cf0-9679-67197ac42725",
+  "slug": "lucca",
+  "name": "Lucca",
+  "province": "LU",
+  "latitude": 43.843,
+  "longitude": 10.5079,
+  "order": 43,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "4f92f68e-7d74-4c2e-8630-d15b38d0b446",
+  "slug": "modena",
+  "name": "Modena",
+  "province": "MO",
+  "latitude": 44.6471,
+  "longitude": 10.9252,
+  "order": 44,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "05302225-5328-4182-bb52-977ab35ca4fb",
+  "slug": "bari",
+  "name": "Bari",
+  "province": "BA",
+  "latitude": 41.1171,
+  "longitude": 16.8719,
+  "order": 45,
+  "region_id": "1ea3614e-4435-4417-ac88-5e9ad45c78cd"
+ },
+ {
+  "id": "8359f2a9-d366-40db-a3b7-9005c3f2f09e",
+  "slug": "pesaro",
+  "name": "Pesaro",
+  "province": "PU",
+  "latitude": 43.9102,
+  "longitude": 12.9132,
+  "order": 46,
+  "region_id": "c1ff3fed-0213-4c6c-91c8-8a09c9245551"
+ },
+ {
+  "id": "82e1eb5c-b579-4a4a-92f9-92e3bda6c761",
+  "slug": "sassari",
+  "name": "Sassari",
+  "province": "SS",
+  "latitude": 40.7259,
+  "longitude": 8.5557,
+  "order": 47,
+  "region_id": "e517d7bd-2c1c-4995-aac6-9214a0da6f5e"
+ },
+ {
+  "id": "db6df4ab-c673-4f6a-89d0-b1cd4948f939",
+  "slug": "siracusa",
+  "name": "Siracusa",
+  "province": "SR",
+  "latitude": 37.0755,
+  "longitude": 15.2866,
+  "order": 48,
+  "region_id": "bfabd790-07b3-4539-808f-3d65f9824414"
+ },
+ {
+  "id": "c005cdc6-c4da-4ea9-9c27-2ee854faa8ef",
+  "slug": "trento",
+  "name": "Trento",
+  "province": "TN",
+  "latitude": 46.0686,
+  "longitude": 11.1211,
+  "order": 49,
+  "region_id": "43662d78-98ba-4b06-be17-472f982899b0"
+ },
+ {
+  "id": "1ec9d893-9ea7-44a9-b4a8-cb11025acd0f",
+  "slug": "arezzo",
+  "name": "Arezzo",
+  "province": "AR",
+  "latitude": 43.4633,
+  "longitude": 11.8796,
+  "order": 50,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "0abdb2de-eeaf-4d94-a042-1bf462d95f63",
+  "slug": "asti",
+  "name": "Asti",
+  "province": "AT",
+  "latitude": 44.9009,
+  "longitude": 8.2065,
+  "order": 51,
+  "region_id": "beb62461-dc9b-447d-b541-2e89f67e1025"
+ },
+ {
+  "id": "cmpolnmey03mf01pfpl83i9lh",
+  "slug": "casalzuigno",
+  "name": "Casalzuigno",
+  "province": "VA",
+  "latitude": null,
+  "longitude": null,
+  "order": 52,
+  "region_id": null
+ },
+ {
+  "id": "c4ae92a0-ba10-4cc1-8f4b-fea43ddb49fa",
+  "slug": "macerata",
+  "name": "Macerata",
+  "province": "MC",
+  "latitude": 43.3003,
+  "longitude": 13.4534,
+  "order": 53,
+  "region_id": "c1ff3fed-0213-4c6c-91c8-8a09c9245551"
+ },
+ {
+  "id": "e340411e-a6ce-43b8-9144-824b7bb41c53",
+  "slug": "mantova",
+  "name": "Mantova",
+  "province": "MN",
+  "latitude": 45.1564,
+  "longitude": 10.7914,
+  "order": 54,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "385a756e-921b-45de-b5c0-cc54b8349ab2",
+  "slug": "messina",
+  "name": "Messina",
+  "province": "ME",
+  "latitude": 38.1938,
+  "longitude": 15.554,
+  "order": 55,
+  "region_id": "bfabd790-07b3-4539-808f-3d65f9824414"
+ },
+ {
+  "id": "fe09221e-26ae-47f2-af8f-17822b9b012b",
+  "slug": "ravenna",
+  "name": "Ravenna",
+  "province": "RA",
+  "latitude": 44.4184,
+  "longitude": 12.2035,
+  "order": 56,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "f7081e9e-8fd1-42c2-8d33-c491c5dc7609",
+  "slug": "udine",
+  "name": "Udine",
+  "province": "UD",
+  "latitude": 46.0626,
+  "longitude": 13.235,
+  "order": 57,
+  "region_id": "75ad86b1-0cea-4e76-8590-77932677664a"
+ },
+ {
+  "id": "0f9c45ec-6cc7-4ae5-b74f-84e981c7fee3",
+  "slug": "chieti",
+  "name": "Chieti",
+  "province": "CH",
+  "latitude": 42.351,
+  "longitude": 14.1675,
+  "order": 58,
+  "region_id": "3db50be2-b5ad-496a-8618-5675b02b9682"
+ },
+ {
+  "id": "44e9c805-dbb1-4c96-abc0-3f74c45043f8",
+  "slug": "cremona",
+  "name": "Cremona",
+  "province": "CR",
+  "latitude": 45.1332,
+  "longitude": 10.0227,
+  "order": 59,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "3a08a096-bd99-4f5d-ad6d-85aa3ce77d93",
+  "slug": "imperia",
+  "name": "Imperia",
+  "province": "IM",
+  "latitude": 43.8858,
+  "longitude": 8.0276,
+  "order": 60,
+  "region_id": "03e3dd0e-a1aa-4d4b-84af-942c18954112"
+ },
+ {
+  "id": "dd0bc888-f76f-4970-9c9a-e9944176b7db",
+  "slug": "la-spezia",
+  "name": "La Spezia",
+  "province": "SP",
+  "latitude": 44.1072,
+  "longitude": 9.8289,
+  "order": 61,
+  "region_id": "03e3dd0e-a1aa-4d4b-84af-942c18954112"
+ },
+ {
+  "id": "97035a30-cd99-4063-9621-43896f4f9a99",
+  "slug": "matera",
+  "name": "Matera",
+  "province": "MT",
+  "latitude": 40.6664,
+  "longitude": 16.6043,
+  "order": 62,
+  "region_id": "2bbf07e6-08a7-4e24-a050-0a143a8fedc0"
+ },
+ {
+  "id": "b96bb814-abec-4464-b396-e38ed86aa1c4",
+  "slug": "pistoia",
+  "name": "Pistoia",
+  "province": "PT",
+  "latitude": 43.9334,
+  "longitude": 10.9177,
+  "order": 63,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "29c19b1b-a844-423d-94e8-bf7c84aa159a",
+  "slug": "prato",
+  "name": "Prato",
+  "province": "PO",
+  "latitude": 43.8805,
+  "longitude": 11.0967,
+  "order": 64,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "c268e1bd-2694-4251-98aa-3e51e4b103f7",
+  "slug": "savona",
+  "name": "Savona",
+  "province": "SV",
+  "latitude": 44.3081,
+  "longitude": 8.4811,
+  "order": 65,
+  "region_id": "03e3dd0e-a1aa-4d4b-84af-942c18954112"
+ },
+ {
+  "id": "6e82a1f0-ab9c-45af-8f18-35addf06dd28",
+  "slug": "trapani",
+  "name": "Trapani",
+  "province": "TP",
+  "latitude": 38.0176,
+  "longitude": 12.5365,
+  "order": 66,
+  "region_id": "bfabd790-07b3-4539-808f-3d65f9824414"
+ },
+ {
+  "id": "bf487361-15d7-4606-8699-17b4a9a8dce5",
+  "slug": "verbania",
+  "name": "Verbania",
+  "province": "VB",
+  "latitude": 45.9214,
+  "longitude": 8.5512,
+  "order": 67,
+  "region_id": "beb62461-dc9b-447d-b541-2e89f67e1025"
+ },
+ {
+  "id": "c149e222-8d2a-4f11-b330-82df5220b071",
+  "slug": "ancona",
+  "name": "Ancona",
+  "province": "AN",
+  "latitude": 43.6158,
+  "longitude": 13.5189,
+  "order": 68,
+  "region_id": "c1ff3fed-0213-4c6c-91c8-8a09c9245551"
+ },
+ {
+  "id": "6d638395-e4d6-4f34-9a5b-96beee41f359",
+  "slug": "cagliari",
+  "name": "Cagliari",
+  "province": "CA",
+  "latitude": 39.2238,
+  "longitude": 9.1217,
+  "order": 69,
+  "region_id": "e517d7bd-2c1c-4995-aac6-9214a0da6f5e"
+ },
+ {
+  "id": "e3606e4a-cf07-4a09-8330-cc8732bc8590",
+  "slug": "l-aquila",
+  "name": "L'Aquila",
+  "province": "AQ",
+  "latitude": 42.3512,
+  "longitude": 13.3984,
+  "order": 70,
+  "region_id": "3db50be2-b5ad-496a-8618-5675b02b9682"
+ },
+ {
+  "id": "0dff04d7-48eb-46fe-b862-461135844b79",
+  "slug": "taranto",
+  "name": "Taranto",
+  "province": "TA",
+  "latitude": 40.4644,
+  "longitude": 17.247,
+  "order": 71,
+  "region_id": "1ea3614e-4435-4417-ac88-5e9ad45c78cd"
+ },
+ {
+  "id": "7d264a30-2226-4aa7-be58-acd6e39a78db",
+  "slug": "ascoli-piceno",
+  "name": "Ascoli Piceno",
+  "province": "AP",
+  "latitude": 42.8537,
+  "longitude": 13.5751,
+  "order": 72,
+  "region_id": "c1ff3fed-0213-4c6c-91c8-8a09c9245551"
+ },
+ {
+  "id": "25f87578-f320-464b-b443-dfe9239d4c79",
+  "slug": "belluno",
+  "name": "Belluno",
+  "province": "BL",
+  "latitude": 46.1391,
+  "longitude": 12.2167,
+  "order": 73,
+  "region_id": "cb438696-cddd-46d0-aff2-bab22a72f718"
+ },
+ {
+  "id": "42449942-73fa-4b45-8b37-e801e0a2a04d",
+  "slug": "brindisi",
+  "name": "Brindisi",
+  "province": "BR",
+  "latitude": 40.6384,
+  "longitude": 17.9463,
+  "order": 74,
+  "region_id": "1ea3614e-4435-4417-ac88-5e9ad45c78cd"
+ },
+ {
+  "id": "5c2ecf8f-7ccd-4c3f-88c8-5f0a6d4215c5",
+  "slug": "fermo",
+  "name": "Fermo",
+  "province": "FM",
+  "latitude": 43.1604,
+  "longitude": 13.7186,
+  "order": 75,
+  "region_id": "c1ff3fed-0213-4c6c-91c8-8a09c9245551"
+ },
+ {
+  "id": "9d3970ea-7f49-44fd-bd39-15014931e0b1",
+  "slug": "foggia",
+  "name": "Foggia",
+  "province": "FG",
+  "latitude": 41.4622,
+  "longitude": 15.5446,
+  "order": 76,
+  "region_id": "1ea3614e-4435-4417-ac88-5e9ad45c78cd"
+ },
+ {
+  "id": "735fae92-e0e3-44b4-a971-aa82f7d33b33",
+  "slug": "gorizia",
+  "name": "Gorizia",
+  "province": "GO",
+  "latitude": 45.9411,
+  "longitude": 13.6217,
+  "order": 77,
+  "region_id": "75ad86b1-0cea-4e76-8590-77932677664a"
+ },
+ {
+  "id": "74874657-d961-445a-9cc2-921e357ec25c",
+  "slug": "lodi",
+  "name": "Lodi",
+  "province": "LO",
+  "latitude": 45.3142,
+  "longitude": 9.5034,
+  "order": 78,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "0f4009dc-10af-43dd-88f8-0f7468411cbe",
+  "slug": "pescara",
+  "name": "Pescara",
+  "province": "PE",
+  "latitude": 42.4643,
+  "longitude": 14.2142,
+  "order": 79,
+  "region_id": "3db50be2-b5ad-496a-8618-5675b02b9682"
+ },
+ {
+  "id": "5fb506b8-a398-418a-9977-0063cecd7fd4",
+  "slug": "pordenone",
+  "name": "Pordenone",
+  "province": "PN",
+  "latitude": 45.9563,
+  "longitude": 12.6605,
+  "order": 80,
+  "region_id": "75ad86b1-0cea-4e76-8590-77932677664a"
+ },
+ {
+  "id": "31a53255-4f1f-4a0b-97c9-228ea4331cfc",
+  "slug": "ragusa",
+  "name": "Ragusa",
+  "province": "RG",
+  "latitude": 36.9269,
+  "longitude": 14.7255,
+  "order": 81,
+  "region_id": "bfabd790-07b3-4539-808f-3d65f9824414"
+ },
+ {
+  "id": "1e217f39-280a-4dce-8cf8-e2a60d0b268f",
+  "slug": "reggio-calabria",
+  "name": "Reggio Calabria",
+  "province": "RC",
+  "latitude": 38.1113,
+  "longitude": 15.6473,
+  "order": 82,
+  "region_id": "b57d63d5-b9f5-4797-ba39-8b3e595ac588"
+ },
+ {
+  "id": "a7801ad5-9b28-43b5-a797-b51ec3232dbb",
+  "slug": "vercelli",
+  "name": "Vercelli",
+  "province": "VC",
+  "latitude": 45.3201,
+  "longitude": 8.4185,
+  "order": 83,
+  "region_id": "beb62461-dc9b-447d-b541-2e89f67e1025"
+ },
+ {
+  "id": "79d2d89b-3eda-4113-9903-9c25c7414a8f",
+  "slug": "barletta",
+  "name": "Barletta",
+  "province": "BT",
+  "latitude": 41.3194,
+  "longitude": 16.2842,
+  "order": 84,
+  "region_id": "1ea3614e-4435-4417-ac88-5e9ad45c78cd"
+ },
+ {
+  "id": "934be3d9-2719-42b6-9cbd-041e5d2ba0f2",
+  "slug": "biella",
+  "name": "Biella",
+  "province": "BI",
+  "latitude": 45.5628,
+  "longitude": 8.0583,
+  "order": 85,
+  "region_id": "beb62461-dc9b-447d-b541-2e89f67e1025"
+ },
+ {
+  "id": "b7aeb849-858d-41bd-b802-9bd036d44c80",
+  "slug": "bolzano",
+  "name": "Bolzano",
+  "province": "BZ",
+  "latitude": 46.4983,
+  "longitude": 11.3548,
+  "order": 86,
+  "region_id": "43662d78-98ba-4b06-be17-472f982899b0"
+ },
+ {
+  "id": "802ef305-9b2f-43d1-b14f-cea58a8d87e2",
+  "slug": "caltanissetta",
+  "name": "Caltanissetta",
+  "province": "CL",
+  "latitude": 37.4863,
+  "longitude": 14.0625,
+  "order": 87,
+  "region_id": "bfabd790-07b3-4539-808f-3d65f9824414"
+ },
+ {
+  "id": "a1e9757a-6584-43c6-a785-b9f02c610ec2",
+  "slug": "carbonia",
+  "name": "Carbonia",
+  "province": "SU",
+  "latitude": 39.1672,
+  "longitude": 8.5225,
+  "order": 88,
+  "region_id": "e517d7bd-2c1c-4995-aac6-9214a0da6f5e"
+ },
+ {
+  "id": "42d0c2b8-b5c9-4077-adeb-eb1ba1bad644",
+  "slug": "catanzaro",
+  "name": "Catanzaro",
+  "province": "CZ",
+  "latitude": 38.9098,
+  "longitude": 16.5877,
+  "order": 89,
+  "region_id": "b57d63d5-b9f5-4797-ba39-8b3e595ac588"
+ },
+ {
+  "id": "eab30af2-5490-40d9-9a8b-738ed7ba8a55",
+  "slug": "grosseto",
+  "name": "Grosseto",
+  "province": "GR",
+  "latitude": 42.7596,
+  "longitude": 11.1131,
+  "order": 90,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "05c5e66b-3547-4a9d-a674-af94d16fc22b",
+  "slug": "livorno",
+  "name": "Livorno",
+  "province": "LI",
+  "latitude": 43.5485,
+  "longitude": 10.3106,
+  "order": 91,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "4cc4749c-2035-43eb-a2a1-6d9e37f0c1b0",
+  "slug": "massa",
+  "name": "Massa",
+  "province": "MS",
+  "latitude": 44.037,
+  "longitude": 10.1413,
+  "order": 92,
+  "region_id": "cmp883ylt00020tlopfzg6iu9"
+ },
+ {
+  "id": "a5ac7ee4-4829-46dc-8220-ce98451c3246",
+  "slug": "potenza",
+  "name": "Potenza",
+  "province": "PZ",
+  "latitude": 40.6403,
+  "longitude": 15.8056,
+  "order": 93,
+  "region_id": "2bbf07e6-08a7-4e24-a050-0a143a8fedc0"
+ },
+ {
+  "id": "d32f1a34-c371-45e2-a47f-880dea2d3b8c",
+  "slug": "rovigo",
+  "name": "Rovigo",
+  "province": "RO",
+  "latitude": 45.0705,
+  "longitude": 11.7905,
+  "order": 94,
+  "region_id": "cb438696-cddd-46d0-aff2-bab22a72f718"
+ },
+ {
+  "id": "9713b824-57a5-421c-9fff-c42cc76edcce",
+  "slug": "sondrio",
+  "name": "Sondrio",
+  "province": "SO",
+  "latitude": 46.1699,
+  "longitude": 9.8728,
+  "order": 95,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "d3e698e3-cd0c-4b7e-9b1d-9d49acd665a3",
+  "slug": "teramo",
+  "name": "Teramo",
+  "province": "TE",
+  "latitude": 42.6589,
+  "longitude": 13.7038,
+  "order": 96,
+  "region_id": "3db50be2-b5ad-496a-8618-5675b02b9682"
+ },
+ {
+  "id": "79da2420-c396-40e1-9e92-4b05cb167f69",
+  "slug": "vibo-valentia",
+  "name": "Vibo Valentia",
+  "province": "VV",
+  "latitude": 38.6757,
+  "longitude": 16.1022,
+  "order": 97,
+  "region_id": "b57d63d5-b9f5-4797-ba39-8b3e595ac588"
+ },
+ {
+  "id": "a177dae6-ce01-4e29-a18e-1e6cd255991f",
+  "slug": "agrigento",
+  "name": "Agrigento",
+  "province": "AG",
+  "latitude": 37.311,
+  "longitude": 13.5765,
+  "order": 98,
+  "region_id": "bfabd790-07b3-4539-808f-3d65f9824414"
+ },
+ {
+  "id": "8bbbb182-66b2-48ac-8dfb-252f0972a72a",
+  "slug": "aosta",
+  "name": "Aosta",
+  "province": "AO",
+  "latitude": 45.7372,
+  "longitude": 7.3203,
+  "order": 99,
+  "region_id": "b80f9a37-e213-4b57-b226-438398f8dd98"
+ },
+ {
+  "id": "fb30500a-8955-47c7-b127-79873ba8fa33",
+  "slug": "campobasso",
+  "name": "Campobasso",
+  "province": "CB",
+  "latitude": 41.5603,
+  "longitude": 14.6627,
+  "order": 100,
+  "region_id": "692e3d78-cf6d-4f61-8273-0e278bf471cd"
+ },
+ {
+  "id": "9dd31055-7890-47ec-87c2-27461e21f951",
+  "slug": "cosenza",
+  "name": "Cosenza",
+  "province": "CS",
+  "latitude": 39.2983,
+  "longitude": 16.2536,
+  "order": 101,
+  "region_id": "b57d63d5-b9f5-4797-ba39-8b3e595ac588"
+ },
+ {
+  "id": "83f3526b-899e-4a57-acbb-483dd97801da",
+  "slug": "crotone",
+  "name": "Crotone",
+  "province": "KR",
+  "latitude": 39.0808,
+  "longitude": 17.1273,
+  "order": 102,
+  "region_id": "b57d63d5-b9f5-4797-ba39-8b3e595ac588"
+ },
+ {
+  "id": "cmpomjrw005ve01pfe52lgrf8",
+  "slug": "dipartimento-di-san-salvador",
+  "name": "Dipartimento di San Salvador",
+  "province": null,
+  "latitude": null,
+  "longitude": null,
+  "order": 103,
+  "region_id": null
+ },
+ {
+  "id": "a5a0716c-6b3d-49d3-9b36-5dc855b22d92",
+  "slug": "enna",
+  "name": "Enna",
+  "province": "EN",
+  "latitude": 37.5664,
+  "longitude": 14.2761,
+  "order": 104,
+  "region_id": "bfabd790-07b3-4539-808f-3d65f9824414"
+ },
+ {
+  "id": "dd0976d8-06ff-4e6f-9b36-f2b1f94aabe8",
+  "slug": "ferrara",
+  "name": "Ferrara",
+  "province": "FE",
+  "latitude": 44.8381,
+  "longitude": 11.6198,
+  "order": 105,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "07ecf814-fd44-43fa-862a-65bbd5f362af",
+  "slug": "forli-cesena",
+  "name": "Forlì-Cesena",
+  "province": "FC",
+  "latitude": null,
+  "longitude": null,
+  "order": 106,
+  "region_id": "e8fd28af-a281-4e21-84fe-ec45f49af8c5"
+ },
+ {
+  "id": "4fba1f3f-8981-4d30-842d-9eb00ee91798",
+  "slug": "isernia",
+  "name": "Isernia",
+  "province": "IS",
+  "latitude": 41.5954,
+  "longitude": 14.2304,
+  "order": 107,
+  "region_id": "692e3d78-cf6d-4f61-8273-0e278bf471cd"
+ },
+ {
+  "id": "34da77a0-8a93-4ba3-8a35-0d8807e8e4c5",
+  "slug": "monza-e-brianza",
+  "name": "Monza e della Brianza",
+  "province": "MB",
+  "latitude": null,
+  "longitude": null,
+  "order": 108,
+  "region_id": "cmp883ylm00010tlo5pp7o5nz"
+ },
+ {
+  "id": "936170f3-04da-41b8-8e57-a6f30bbed84e",
+  "slug": "nuoro",
+  "name": "Nuoro",
+  "province": "NU",
+  "latitude": 40.3209,
+  "longitude": 9.329,
+  "order": 109,
+  "region_id": "e517d7bd-2c1c-4995-aac6-9214a0da6f5e"
+ },
+ {
+  "id": "cmpolr4rd03w301pfx4e43yf1",
+  "slug": "oria",
+  "name": "Oria",
+  "province": "CO",
+  "latitude": null,
+  "longitude": null,
+  "order": 110,
+  "region_id": null
+ },
+ {
+  "id": "d2d1afb2-8b92-4be6-9147-c5e7ae1c912f",
+  "slug": "oristano",
+  "name": "Oristano",
+  "province": "OR",
+  "latitude": 39.9036,
+  "longitude": 8.5912,
+  "order": 111,
+  "region_id": "e517d7bd-2c1c-4995-aac6-9214a0da6f5e"
+ },
+ {
+  "id": "db53735a-c489-4d84-8641-e0e199663ffa",
+  "slug": "pesaro-urbino",
+  "name": "Pesaro e Urbino",
+  "province": "PU",
+  "latitude": null,
+  "longitude": null,
+  "order": 112,
+  "region_id": "c1ff3fed-0213-4c6c-91c8-8a09c9245551"
+ },
+ {
+  "id": "cmpoln6m003l601pffqhrizja",
+  "slug": "torreglia",
+  "name": "Torreglia",
+  "province": "PD",
+  "latitude": null,
+  "longitude": null,
+  "order": 113,
+  "region_id": null
+ },
+ {
+  "id": "969c4def-ee5b-4c07-a837-39f02c3b54cc",
+  "slug": "trieste",
+  "name": "Trieste",
+  "province": "TS",
+  "latitude": 45.6495,
+  "longitude": 13.7768,
+  "order": 114,
+  "region_id": "75ad86b1-0cea-4e76-8590-77932677664a"
+ },
+ {
+  "id": "1abf878b-dbd3-48ca-9a36-9ceba3cb4a09",
+  "slug": "verbano-cusio-ossola",
+  "name": "Verbano-Cusio-Ossola",
+  "province": "VB",
+  "latitude": null,
+  "longitude": null,
+  "order": 115,
+  "region_id": "beb62461-dc9b-447d-b541-2e89f67e1025"
+ }
+]

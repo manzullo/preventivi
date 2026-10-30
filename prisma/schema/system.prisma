@@ -1,0 +1,160 @@
+// Integrazioni e impostazioni. Le impostazioni del plugin (wp_options)
+// diventano righe di Setting; i token OAuth stanno cifrati in AdsAccount.
+
+model AdsAccount {
+  id              String    @id @default(cuid())
+  name            String
+  customerId      String    @unique // 1234567890 senza trattini
+  loginCustomerId String?            // MCC
+  refreshTokenEnc String             // cifrato con APP_SECRET
+  isDefault       Boolean   @default(false)
+  connectedAt     DateTime  @default(now())
+  lastCheckedAt   DateTime?
+  lastError       String?
+}
+
+model Notification {
+  id         String  @id @default(cuid())
+  name       String
+  channel    String  // email | whatsapp_evolution | whatsapp_callmebot
+  recipients Json    // ["a@b.it"] oppure numeri
+  formId     String? // null = tutti i form
+  // Soglie e filtri: valore minimo, servizi, città, orari.
+  rules      Json?
+  enabled    Boolean @default(true)
+
+  logs NotificationLog[]
+}
+
+model NotificationLog {
+  id             String       @id @default(cuid())
+  notificationId String
+  notification   Notification @relation(fields: [notificationId], references: [id], onDelete: Cascade)
+  leadId         String?
+  lead           Lead?        @relation(fields: [leadId], references: [id])
+  status         String       // sent | failed | skipped
+  payload        Json?
+  error          String?
+  createdAt      DateTime     @default(now())
+
+  @@index([notificationId, createdAt])
+}
+
+// Chiave/valore per SMTP, GTM, GA4, provider AI, soglie di pubblicazione.
+model Setting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model Redirect {
+  id        String   @id @default(cuid())
+  fromPath  String   @unique
+  toPath    String?  // null con status 410
+  status    Int      @default(301) // 301 | 410
+  createdAt DateTime @default(now())
+}
+
+model Page {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  kind        String    @default("static") // static | blog
+  title       String
+  description String?
+  body        String    // markdown
+  published   Boolean   @default(false)
+  publishedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([kind, published])
+}
+
+// Cronologia: modifiche rilevanti (form, keyword, campagne) con autore e diff.
+model ChangelogEntry {
+  id        String   @id @default(cuid())
+  area      String   // form | ads | gtm | settings | ingest
+  action    String
+  subject   String?
+  diff      Json?
+  actor     String?
+  createdAt DateTime @default(now())
+
+  @@index([area, createdAt])
+}
+
+// Log tecnico (Debug del plugin): livello, area, messaggio, dettagli.
+model DebugLog {
+  id        String   @id @default(cuid())
+  level     String   // info | warn | error
+  area      String   // gads_api | gtm_api | notify | ingest | forms
+  message   String
+  meta      Json?
+  createdAt DateTime @default(now())
+
+  @@index([area, createdAt])
+  @@index([level, createdAt])
+}
+
+
+/// Chi entra nel pannello. La password non si salva mai in chiaro: si tiene
+/// l'impronta scrypt con il suo sale. I ruoli: owner fa tutto, editor lavora
+/// su schede, pagine e richieste, viewer guarda e basta.
+model AdminUser {
+  id        String    @id @default(cuid())
+  email     String    @unique
+  name      String?
+  role      String    @default("editor") // owner | editor | viewer
+  password  String // scrypt$<sale>$<impronta>
+  active    Boolean   @default(true)
+  lastLogin DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+
+/**
+ * Chiave per il connettore di analisi: la si incolla in Claude o in ChatGPT e
+ * da lì si possono interrogare i dati del sito a parole.
+ *
+ * La chiave non si conserva in chiaro, si conserva la sua impronta: se il
+ * database finisce nelle mani sbagliate, le chiavi restano inutilizzabili.
+ * Ogni chiave sa a chi appartiene e quando è stata usata l'ultima volta, così
+ * una chiave dimenticata si riconosce e si revoca.
+ */
+model ApiKey {
+  id         String    @id @default(cuid())
+  nome       String // "Claude di Alessandro", "ChatGPT ufficio"
+  impronta   String    @unique // sha256 della chiave
+  prefisso   String // le prime lettere, per riconoscerla nell'elenco
+  email      String // chi l'ha creata: solo email abilitate
+  attiva     Boolean   @default(true)
+  ultimoUso  DateTime?
+  chiamate   Int       @default(0)
+  createdAt  DateTime  @default(now())
+  revocataIl DateTime?
+
+  @@index([attiva])
+}
+
+
+/**
+ * Codice di autorizzazione OAuth, vivo pochi minuti.
+ *
+ * Claude e ChatGPT, quando si aggiunge un connettore, non chiedono una chiave:
+ * avviano un accesso vero. Questa tabella tiene il passaggio intermedio fra
+ * "ho detto di sì nel pannello" e "l'assistente ritira la sua chiave".
+ */
+model OAuthCode {
+  id            String   @id @default(cuid())
+  codice        String   @unique
+  clientId      String
+  redirectUri   String
+  codeChallenge String? // PKCE: la prova che chi ritira è chi ha chiesto
+  email         String
+  scadenza      DateTime
+  usato         Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@index([scadenza])
+}

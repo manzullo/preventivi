@@ -1,0 +1,15 @@
+{
+  "source": "prontopro",
+  "start": "https://www.prontopro.it/{citta}-{categoria}",
+  "categorie": {
+    "idraulici": "idraulico",
+    "elettricisti": "elettricista",
+    "imbianchini": "imbianchino",
+    "fotografi": "fotografo",
+    "commercialisti": "commercialisti"
+  },
+  "scheda": "^https://(www\\.)?prontopro\\.it/pro/[a-z0-9-]+_\\d+$",
+  "maxPagine": 1,
+  "pausaMs": 3000,
+  "estrattore": "prontopro"
+}

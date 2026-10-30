@@ -1,0 +1,16 @@
+{
+  "source": "paginegialle",
+  "start": "https://www.paginegialle.it/{citta}/{categoria}.html",
+  "categorie": {
+    "idraulici": "idraulici",
+    "elettricisti": "elettricisti",
+    "imbianchini": "imbianchini",
+    "fotografi": "fotografi",
+    "commercialisti": "commercialisti"
+  },
+  "citta": { "roma": "lazio/roma" },
+  "scheda": "^https://www\\.paginegialle\\.it/(?!supermercati-aperti$|mappa-del-sito$|farmacie-turno$)[a-z0-9-]+$",
+  "successiva": "^https://www\\.paginegialle\\.it/[a-z]+/[a-z_]+/[a-z-]+/p-\\d+\\.html$",
+  "maxPagine": 3,
+  "pausaMs": 3000
+}
